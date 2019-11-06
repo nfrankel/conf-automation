@@ -73,7 +73,7 @@ internal fun AppProperties.toCredential() = GoogleCredential.Builder().apply {
     serviceAccountId = this@toCredential.google.clientEmail
     serviceAccountPrivateKeyId = this@toCredential.google.privateKeyId
     serviceAccountPrivateKey = this@toCredential.google.privateKey.toPrivateKey()
-    serviceAccountScopes = listOf(CalendarScopes.CALENDAR, SheetsScopes.SPREADSHEETS_READONLY)
+    serviceAccountScopes = listOf(CalendarScopes.CALENDAR, SheetsScopes.SPREADSHEETS)
 }.build()
 
 /* Inspired from com.google.api.client.googleapis.auth.oauth2.GoogleCredential.privateKeyFromPkcs8() .*/

@@ -20,6 +20,7 @@ fun beans() = beans {
     bean("computeEventType") { computeEventType }
     bean("removeDueDate") { RemoveDueDate(ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref(), ref()) }
+    bean("addSheetRow") { AddSheetRow(ref(), ref()) }
 }
 
 fun routes(runtimeService: RuntimeService) =

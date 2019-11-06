@@ -17,6 +17,7 @@ class TrelloProperties {
 }
 
 class GoogleProperties {
+    lateinit var sheetId: String
     lateinit var calendarId: String
     lateinit var privateKeyId: String
     lateinit var privateKey: String

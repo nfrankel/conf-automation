@@ -1,7 +1,6 @@
 package ch.frankel.conf.automation
 
 import ch.frankel.conf.automation.action.event
-import ch.frankel.conf.automation.trigger.TrelloEvent
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.slf4j.LoggerFactory
 

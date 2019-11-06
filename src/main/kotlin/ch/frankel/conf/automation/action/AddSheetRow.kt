@@ -22,33 +22,43 @@ class AddSheetRow(private val props: AppProperties,
         val hyperlinked = "=HYPERLINK(\"${conference.website}\",\"${conference.name}\")"
         val formattedStartDate = DateTimeFormatter.ISO_LOCAL_DATE.format(conference.startDate)
         val formattedEndDate = DateTimeFormatter.ISO_LOCAL_DATE.format(conference.endDate)
-        val values = mapOf(
-            "A" to listOf(hyperlinked),
-            "B" to listOf("Nicolas Fränkel"),
-            "E" to listOf(conference.location),
-            "H" to listOf(formattedStartDate),
-            "I" to listOf(formattedEndDate),
-            "O" to listOf("Submitted"))
-
-        values.forEach { (col, values) ->
-            val range = ValueRange().apply {
-                setValues(listOf(values))
+        mapOf(
+            Column.CONFERENCE.col to listOf(hyperlinked),
+            Column.SPEAKER.col to listOf("Nicolas Fränkel"),
+            Column.LOCATION_COUNTRY.col to listOf(conference.location),
+            Column.START_DATE.col to listOf(formattedStartDate),
+            Column.END_DATE.col to listOf(formattedEndDate),
+            Column.STATUS.col to listOf("Submitted"))
+            .forEach { (col, values) ->
+                val range = ValueRange().apply {
+                    setValues(listOf(values))
+                }
+                client.Spreadsheets().values()
+                    .update(props.google.sheetId, "$col$row:$col", range)
+                    .setValueInputOption("USER_ENTERED")
+                    .setIncludeValuesInResponse(true)
+                    .execute()
             }
-            client.Spreadsheets().values()
-                .update(props.google.sheetId, "$col$row:$col", range)
-                .setValueInputOption("USER_ENTERED")
-                .setIncludeValuesInResponse(true)
-                .execute()
-        }
     }
 
     private fun getFirstEmptyRow(client: Sheets): Int {
         val values = client.Spreadsheets().values()
-            .get(props.google.sheetId, "A3:A")
+            .get(props.google.sheetId, "${Column.CONFERENCE.col}3:${Column.CONFERENCE.col}")
             .execute()
             .values
-        // Range starts from 1
-        // And there's one blank line that isn't computed by Google Sheets
-        return (values.last() as Collection<Any>).size + 3
+        return (values.last() as Collection<Any>).size + ADDITIONAL_ROWS
     }
 }
+
+private enum class Column(val col: String) {
+    CONFERENCE("A"),
+    SPEAKER("B"),
+    LOCATION_COUNTRY("E"),
+    START_DATE("H"),
+    END_DATE("I"),
+    STATUS("O")
+}
+
+// Range starts from 1
+// And there's one blank line that isn't computed by Google Sheets
+private const val ADDITIONAL_ROWS = 3

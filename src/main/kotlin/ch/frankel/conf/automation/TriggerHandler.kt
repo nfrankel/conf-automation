@@ -1,6 +1,5 @@
 package ch.frankel.conf.automation
 
-import ch.frankel.conf.automation.trigger.TrelloEvent
 import org.camunda.bpm.engine.RuntimeService
 import org.springframework.web.servlet.function.*
 

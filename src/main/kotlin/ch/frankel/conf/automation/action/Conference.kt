@@ -6,8 +6,8 @@ import java.time.temporal.TemporalAccessor
 
 class Conference(title: String, fields: List<Field<out Any>>) {
 
-    val startDate = LocalDate.from((fields.find { it is StartDate } as StartDate).value)
-    val endDate = LocalDate.from((fields.find { it is EndDate } as EndDate).value)
+    val startDate: LocalDate = LocalDate.from((fields.find { it is StartDate } as StartDate).value)
+    val endDate: LocalDate = LocalDate.from((fields.find { it is EndDate } as EndDate).value)
     val website = (fields.find { it is Website } as Website).value
     val name: String
     val location: String

@@ -1,14 +1,13 @@
 package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.AppProperties
-import ch.frankel.conf.automation.trigger.TrelloEvent
+import ch.frankel.conf.automation.TrelloEvent
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
 import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.client.util.*
+import com.google.api.client.util.PemReader
+import com.google.api.client.util.SecurityUtils
 import com.google.api.services.calendar.CalendarScopes
-import com.google.api.services.calendar.model.Event
-import com.google.api.services.calendar.model.EventDateTime
 import com.google.api.services.sheets.v4.SheetsScopes
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
@@ -18,15 +17,13 @@ import org.springframework.web.client.RestTemplate
 import java.io.StringReader
 import java.security.PrivateKey
 import java.security.spec.PKCS8EncodedKeySpec
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 abstract class GoogleAction(private val props: AppProperties,
                             private val fieldsInitializer: CustomFieldsInitializer) : JavaDelegate {
 
     internal val credential = props.toCredential()
 
-    internal val DelegateExecution.customFields: List<Field<out Any>>
+    private val DelegateExecution.customFields: List<Field<out Any>>
         get() {
             val params = mapOf("id" to event.cardId,
                 "key" to props.trello.key,

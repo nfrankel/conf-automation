@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component
 @ConfigurationProperties("application")
 @Component
 class AppProperties {
+    lateinit var speaker: String
     val trello = TrelloProperties()
     val google = GoogleProperties()
 }

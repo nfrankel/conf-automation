@@ -24,7 +24,7 @@ class AddSheetRow(private val props: AppProperties,
         val formattedEndDate = DateTimeFormatter.ISO_LOCAL_DATE.format(conference.endDate)
         mapOf(
             Column.CONFERENCE.col to listOf(hyperlinked),
-            Column.SPEAKER.col to listOf("Nicolas Fränkel"),
+            Column.SPEAKER.col to listOf(props.speaker),
             Column.LOCATION_COUNTRY.col to listOf(conference.location),
             Column.START_DATE.col to listOf(formattedStartDate),
             Column.END_DATE.col to listOf(formattedEndDate),

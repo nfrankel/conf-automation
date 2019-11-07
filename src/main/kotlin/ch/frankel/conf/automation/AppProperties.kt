@@ -15,6 +15,7 @@ class TrelloProperties {
     lateinit var key: String
     lateinit var token: String
     lateinit var boardShortLink: String
+    val ips = mutableSetOf<String>()
 }
 
 class GoogleProperties {

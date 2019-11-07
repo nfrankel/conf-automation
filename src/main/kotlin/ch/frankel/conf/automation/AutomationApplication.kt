@@ -16,6 +16,7 @@ fun beans() = beans {
     bean {
         routes(ref())
     }
+    bean { WhitelistIPFilterRegistrationBean(ref()) }
     bean { CustomFieldsInitializer(ref()) }
     bean("computeEventType") { computeEventType }
     bean("removeDueDate") { RemoveDueDate(ref()) }

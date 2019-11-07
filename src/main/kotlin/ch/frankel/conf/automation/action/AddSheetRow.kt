@@ -4,21 +4,21 @@ import ch.frankel.conf.automation.AppProperties
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.delegate.JavaDelegate
 import java.time.format.DateTimeFormatter
 
-class AddSheetRow(private val props: AppProperties,
-                  fieldsInitializer: CustomFieldsInitializer) : GoogleAction(props, fieldsInitializer) {
+class AddSheetRow(private val props: AppProperties) : JavaDelegate {
 
     override fun execute(execution: DelegateExecution) {
         val client = Sheets
-            .Builder(TRANSPORT, JSON_FACTORY, credential)
+            .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
             .build()
         val firstEmptyRow = getFirstEmptyRow(client)
         updateInPlace(client, execution, firstEmptyRow)
     }
 
     private fun updateInPlace(client: Sheets, execution: DelegateExecution, row: Int) {
-        val conference = extractConference(execution)
+        val conference = execution.conference
         val hyperlinked = "=HYPERLINK(\"${conference.website}\",\"${conference.name}\")"
         val formattedStartDate = DateTimeFormatter.ISO_LOCAL_DATE.format(conference.startDate)
         val formattedEndDate = DateTimeFormatter.ISO_LOCAL_DATE.format(conference.endDate)

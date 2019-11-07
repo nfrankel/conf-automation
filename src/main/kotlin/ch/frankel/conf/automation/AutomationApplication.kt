@@ -19,8 +19,9 @@ fun beans() = beans {
     bean { CustomFieldsInitializer(ref()) }
     bean("computeEventType") { computeEventType }
     bean("removeDueDate") { RemoveDueDate(ref()) }
-    bean("addCalendarEntry") { AddCalendarEntry(ref(), ref()) }
-    bean("addSheetRow") { AddSheetRow(ref(), ref()) }
+    bean("extractConference") { ExtractConference(ref(), ref()) }
+    bean("addCalendarEntry") { AddCalendarEntry(ref()) }
+    bean("addSheetRow") { AddSheetRow(ref()) }
 }
 
 fun routes(runtimeService: RuntimeService) =

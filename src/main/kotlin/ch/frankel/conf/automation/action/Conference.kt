@@ -1,10 +1,11 @@
 package ch.frankel.conf.automation.action
 
+import java.io.Serializable
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.TemporalAccessor
 
-class Conference(title: String, fields: List<Field<out Any>>) {
+class Conference(title: String, fields: List<Field<out Any>>): Serializable {
 
     val startDate: LocalDate = LocalDate.from((fields.find { it is StartDate } as StartDate).value)
     val endDate: LocalDate = LocalDate.from((fields.find { it is EndDate } as EndDate).value)

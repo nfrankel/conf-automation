@@ -6,16 +6,17 @@ import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.EventDateTime
 import org.camunda.bpm.engine.delegate.DelegateExecution
+import org.camunda.bpm.engine.delegate.JavaDelegate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class AddCalendarEntry(private val props: AppProperties, fieldsInitializer: CustomFieldsInitializer) : GoogleAction(props, fieldsInitializer) {
+class AddCalendarEntry(private val props: AppProperties): JavaDelegate {
 
     override fun execute(execution: DelegateExecution) {
         val client = Calendar
-            .Builder(TRANSPORT, JSON_FACTORY, credential)
+            .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
             .build()
-        val event = extractConference(execution).toCalendarEvent()
+        val event = execution.conference.toCalendarEvent()
         client.events().insert(props.google.calendarId, event).execute()
     }
 

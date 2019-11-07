@@ -10,10 +10,14 @@ import kotlin.collections.List
 class ExtractConference(private val props: AppProperties,
                         private val fieldsInitializer: CustomFieldsInitializer): JavaDelegate {
 
+    companion object {
+        const val BPMN_CONFERENCE = "conference"
+    }
+
     override fun execute(execution: DelegateExecution) {
         val fields = execution.customFields
         val name = execution.event.action.data.card.name
-        execution.setVariable("conference", Conference(name, fields))
+        execution.setVariable(BPMN_CONFERENCE, Conference(name, fields))
     }
 
     private val DelegateExecution.customFields: List<Field<out Any>>

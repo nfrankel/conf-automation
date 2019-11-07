@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
 class AddCalendarEntry(props: AppProperties) : JavaDelegate {
 
     private val client = Calendar
-        .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
+        .Builder(TRANSPORT, JSON_FACTORY, props.credential)
         .build()
 
     private val google = props.google

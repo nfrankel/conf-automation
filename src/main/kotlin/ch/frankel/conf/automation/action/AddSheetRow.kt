@@ -5,12 +5,11 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
-import java.time.format.DateTimeFormatter
 
 class AddSheetRow(private val props: AppProperties) : JavaDelegate {
 
     private val client = Sheets
-        .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
+        .Builder(TRANSPORT, JSON_FACTORY, props.credential)
         .build()
 
     override fun execute(execution: DelegateExecution) {
@@ -21,8 +20,8 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
     private fun updateInPlace(execution: DelegateExecution, row: Int) {
         val conference = execution.conference
         val hyperlinked = "=HYPERLINK(\"${conference.website}\",\"${conference.name}\")"
-        val formattedStartDate = DateTimeFormatter.ISO_LOCAL_DATE.format(conference.startDate)
-        val formattedEndDate = DateTimeFormatter.ISO_LOCAL_DATE.format(conference.endDate)
+        val formattedStartDate = conference.startDate.formatted
+        val formattedEndDate = conference.endDate.formatted
         mapOf(
             Column.CONFERENCE.col to listOf(hyperlinked),
             Column.SPEAKER.col to listOf(props.speaker),
@@ -45,19 +44,20 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
             .get(props.google.sheetId, "${Column.CONFERENCE.col}3:${Column.CONFERENCE.col}")
             .execute()
             .values
-        return (values.last() as Collection<Any>).size + ADDITIONAL_ROWS
+        return (values.last() as Collection<Any>).size + additionalRows
     }
+
+    private enum class Column(val col: String) {
+        CONFERENCE("A"),
+        SPEAKER("B"),
+        LOCATION_COUNTRY("E"),
+        START_DATE("H"),
+        END_DATE("I"),
+        STATUS("O")
+    }
+
+    // Range starts from 1
+    // And there's one blank line that isn't computed by Google Sheets
+    private val additionalRows = 3
 }
 
-private enum class Column(val col: String) {
-    CONFERENCE("A"),
-    SPEAKER("B"),
-    LOCATION_COUNTRY("E"),
-    START_DATE("H"),
-    END_DATE("I"),
-    STATUS("O")
-}
-
-// Range starts from 1
-// And there's one blank line that isn't computed by Google Sheets
-private const val ADDITIONAL_ROWS = 3

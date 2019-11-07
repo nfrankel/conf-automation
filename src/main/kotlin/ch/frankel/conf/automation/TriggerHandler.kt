@@ -5,9 +5,14 @@ import org.springframework.web.servlet.function.*
 
 
 class TriggerHandler(private val runtimeService: RuntimeService) {
+
+    companion object {
+        const val BPMN_EVENT = "event"
+    }
+
     fun post(request: ServerRequest): ServerResponse {
         val event = request.body<TrelloEvent>()
-        val params = mapOf("event" to event)
+        val params = mapOf(BPMN_EVENT to event)
         val id = runtimeService
             .startProcessInstanceByKey("HandleChange", params)
             .processDefinitionId

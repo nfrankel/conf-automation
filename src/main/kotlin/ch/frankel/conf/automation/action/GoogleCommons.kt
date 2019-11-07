@@ -2,6 +2,7 @@ package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.AppProperties
 import ch.frankel.conf.automation.GoogleProperties
+import ch.frankel.conf.automation.action.ExtractConference.Companion.BPMN_CONFERENCE
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.util.*
 import com.google.api.services.calendar.Calendar
@@ -13,18 +14,23 @@ import java.security.PrivateKey
 import java.security.spec.PKCS8EncodedKeySpec
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 internal val DelegateExecution.conference: Conference
-    get() = getVariable("conference") as Conference
+    get() = getVariable(BPMN_CONFERENCE) as Conference
 
-internal fun AppProperties.toCredential() = GoogleCredential.Builder().apply {
-    transport = TRANSPORT
-    jsonFactory = JSON_FACTORY
-    serviceAccountId = this@toCredential.google.clientEmail
-    serviceAccountPrivateKeyId = this@toCredential.google.privateKeyId
-    serviceAccountPrivateKey = this@toCredential.google.privateKey.toPrivateKey()
-    serviceAccountScopes = listOf(CalendarScopes.CALENDAR, SheetsScopes.SPREADSHEETS)
-}.build()
+internal val LocalDate.formatted: String
+    get() = DateTimeFormatter.ISO_LOCAL_DATE.format(this)
+
+internal val AppProperties.credential: GoogleCredential
+    get() = GoogleCredential.Builder().apply {
+        transport = TRANSPORT
+        jsonFactory = JSON_FACTORY
+        serviceAccountId = google.clientEmail
+        serviceAccountPrivateKeyId = google.privateKeyId
+        serviceAccountPrivateKey = google.privateKey.toPrivateKey()
+        serviceAccountScopes = listOf(CalendarScopes.CALENDAR, SheetsScopes.SPREADSHEETS)
+    }.build()
 
 internal fun findCalendarEntry(client: Calendar,
                                google: GoogleProperties,

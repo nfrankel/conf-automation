@@ -5,23 +5,20 @@ import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
-import java.lang.IllegalStateException
-import java.time.format.DateTimeFormatter
 
 class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
 
     private val client = Sheets
-        .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
+        .Builder(TRANSPORT, JSON_FACTORY, props.credential)
         .build()
 
     override fun execute(execution: DelegateExecution) {
-        val formattedStartDate = DateTimeFormatter.ISO_LOCAL_DATE.format(execution.conference.startDate)
-        val formattedEndDate = DateTimeFormatter.ISO_LOCAL_DATE.format(execution.conference.endDate)
-        val status = when(execution.getVariable("type") as EventType) {
-            EventType.Rejection -> "Rejected"
-            EventType.Acceptance -> "Accepted"
-            else -> throw IllegalStateException("Unknown event type")
-        }
+        val formattedStartDate = execution.conference.startDate.formatted
+        val formattedEndDate = execution.conference.endDate.formatted
+        val status =
+            if (execution.status == Status.Rejected ||
+                execution.status == Status.Accepted) execution.status.toString()
+            else throw IllegalStateException("Unknown event status")
         client.Spreadsheets().values()
             .get(props.google.sheetId, "A:I")
             .execute()
@@ -42,4 +39,7 @@ class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
                     .execute()
             }
     }
+
+    private val DelegateExecution.status: Status
+        get() = getVariable(BPMN_STATUS) as Status
 }

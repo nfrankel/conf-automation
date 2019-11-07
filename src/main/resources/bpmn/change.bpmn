@@ -5,14 +5,14 @@
       <bpmn:outgoing>SequenceFlow_18k6jre</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_18k6jre" sourceRef="StartEvent_1" targetRef="Task_0lxk87u" />
-    <bpmn:sequenceFlow id="SequenceFlow_08pzrt7" name="Submission" sourceRef="Task_0lxk87u" targetRef="SubProcess_1tsgcqe">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{type == 'Submission'}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="SequenceFlow_08pzrt7" name="Submitted" sourceRef="Task_0lxk87u" targetRef="SubProcess_1tsgcqe">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Submitted'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="EndEvent_12yhp5t">
       <bpmn:incoming>SequenceFlow_19xe1ks</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_19xe1ks" sourceRef="Task_0lxk87u" targetRef="EndEvent_12yhp5t" />
-    <bpmn:serviceTask id="Task_0lxk87u" name="Compute Event Type" default="SequenceFlow_19xe1ks" camunda:delegateExpression="#{computeEventType}">
+    <bpmn:serviceTask id="Task_0lxk87u" name="Compute Event Status" default="SequenceFlow_19xe1ks" camunda:delegateExpression="#{computeEventStatus}">
       <bpmn:incoming>SequenceFlow_18k6jre</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_19xe1ks</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0gjsi7l</bpmn:outgoing>
@@ -23,7 +23,7 @@
       <bpmn:incoming>SequenceFlow_0gjsi7l</bpmn:incoming>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0gjsi7l" name="Abandoned" sourceRef="Task_0lxk87u" targetRef="ServiceTask_1oyp3pf">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{type == 'Submission'}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Abandoned'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:subProcess id="SubProcess_1tsgcqe">
       <bpmn:incoming>SequenceFlow_08pzrt7</bpmn:incoming>
@@ -104,13 +104,13 @@
         <bpmn:outgoing>SequenceFlow_1j0cn0v</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="SequenceFlow_1j0cn0v" sourceRef="ServiceTask_03a47nr" targetRef="InclusiveGateway_03i0qy2" />
-      <bpmn:serviceTask id="ServiceTask_1iedzrb" name="Update Talks Page Row" camunda:delegateExpression="#{updateSheetRow}">
+      <bpmn:serviceTask id="ServiceTask_1iedzrb" name="Update Talks Page Rows" camunda:delegateExpression="#{updateSheetRow}">
         <bpmn:incoming>SequenceFlow_19q2xda</bpmn:incoming>
         <bpmn:outgoing>SequenceFlow_12s675l</bpmn:outgoing>
       </bpmn:serviceTask>
     </bpmn:subProcess>
-    <bpmn:sequenceFlow id="SequenceFlow_0369dmx" name="Rejection" sourceRef="Task_0lxk87u" targetRef="SubProcess_1e4yx45">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{type == 'Rejection'}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="SequenceFlow_0369dmx" name="Rejected" sourceRef="Task_0lxk87u" targetRef="SubProcess_1e4yx45">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Rejected'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmn:message id="Message_199va32" name="Message_3kdsrsn" />
@@ -165,7 +165,7 @@
         <di:waypoint x="340" y="250" />
         <di:waypoint x="520" y="250" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="440" y="263" width="57" height="14" />
+          <dc:Bounds x="444" y="263" width="50" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_12yhp5t_di" bpmnElement="EndEvent_12yhp5t">
@@ -265,7 +265,7 @@
         <di:waypoint x="410" y="540" />
         <di:waypoint x="520" y="540" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="446" y="553" width="46" height="14" />
+          <dc:Bounds x="447" y="553" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_17dx1ga_di" bpmnElement="SequenceFlow_17dx1ga">

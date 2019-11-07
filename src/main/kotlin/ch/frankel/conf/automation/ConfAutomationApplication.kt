@@ -10,15 +10,13 @@ import org.springframework.web.servlet.function.router
 
 @SpringBootApplication
 @EnableProcessApplication
-class AutomationApplication
+class ConfAutomationApplication
 
 fun beans() = beans {
-    bean {
-        routes(ref())
-    }
+    bean { routes(ref()) }
     bean { WhitelistIPFilterRegistrationBean(ref()) }
     bean { CustomFieldsInitializer(ref()) }
-    bean("computeEventType") { computeEventType }
+    bean("computeEventStatus") { computeEventStatus }
     bean("removeDueDate") { RemoveDueDate(ref()) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref()) }
@@ -35,7 +33,7 @@ fun routes(runtimeService: RuntimeService) =
     }
 
 fun main(args: Array<String>) {
-    runApplication<AutomationApplication>(*args) {
+    runApplication<ConfAutomationApplication>(*args) {
         addInitializers(beans())
     }
 }

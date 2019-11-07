@@ -23,6 +23,8 @@ fun beans() = beans {
     bean("extractConference") { ExtractConference(ref(), ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref()) }
     bean("addSheetRow") { AddSheetRow(ref()) }
+    bean("removeCalendarEntry") { RemoveCalendarEntry(ref()) }
+    bean("updateSheetRow") { UpdateSheetRow(ref()) }
 }
 
 fun routes(runtimeService: RuntimeService) =

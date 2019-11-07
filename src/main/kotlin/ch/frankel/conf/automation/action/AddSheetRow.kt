@@ -31,9 +31,7 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
             Column.END_DATE.col to listOf(formattedEndDate),
             Column.STATUS.col to listOf("Submitted"))
             .forEach { (col, values) ->
-                val range = ValueRange().apply {
-                    setValues(listOf(values))
-                }
+                val range = ValueRange().setValues(listOf(values))
                 client.Spreadsheets().values()
                     .update(props.google.sheetId, "$col$row:$col", range)
                     .setValueInputOption("USER_ENTERED")

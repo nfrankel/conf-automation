@@ -10,7 +10,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class AddCalendarEntry(private val props: AppProperties): JavaDelegate {
+class AddCalendarEntry(private val props: AppProperties) : JavaDelegate {
 
     override fun execute(execution: DelegateExecution) {
         val client = Calendar
@@ -26,11 +26,11 @@ class AddCalendarEntry(private val props: AppProperties): JavaDelegate {
         end = this@toCalendarEvent.endDate.toEventDateTime()
         transparency = "transparent"
     }
-}
 
-private fun LocalDate.toEventDateTime(): EventDateTime {
-    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    return EventDateTime().apply {
-        date = DateTime(formatter.format(this@toEventDateTime))
+    private fun LocalDate.toEventDateTime(): EventDateTime {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        return EventDateTime().apply {
+            date = DateTime(formatter.format(this@toEventDateTime))
+        }
     }
 }

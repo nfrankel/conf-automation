@@ -10,14 +10,17 @@ import org.camunda.bpm.engine.delegate.JavaDelegate
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class AddCalendarEntry(private val props: AppProperties) : JavaDelegate {
+class AddCalendarEntry(props: AppProperties) : JavaDelegate {
+
+    private val client = Calendar
+        .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
+        .build()
+
+    private val google = props.google
 
     override fun execute(execution: DelegateExecution) {
-        val client = Calendar
-            .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
-            .build()
         val event = execution.conference.toCalendarEvent()
-        client.events().insert(props.google.calendarId, event).execute()
+        client.events().insert(google.calendarId, event).execute()
     }
 
     private fun Conference.toCalendarEvent() = Event().apply {

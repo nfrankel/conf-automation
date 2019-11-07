@@ -22,18 +22,17 @@ internal val computeEventType = JavaDelegate {
 
 private val LOGGER = LoggerFactory.getLogger("ch.frankel.conf.automation.ComputeEventType")
 
+private val eventTypeMatrix = mapOf(
+    ("Backlog" to "Submitted") to EventType.Submission,
+    ("Submitted" to "Accepted") to EventType.Acceptance,
+    ("Submitted" to "Refused") to EventType.Rejection,
+    ("Backlog" to "Abandoned") to EventType.Abandoned
+)
+
 private val TrelloEvent.type: EventType
     get() {
         val before = action.data.listBefore
         val after = action.data.listAfter
-        if (before == null || after == null) return EventType.Irrelevant
-        if (before.name == "Backlog")
-            return when (after.name) {
-                "Submitted" -> EventType.Submission
-                "Accepted" -> EventType.Acceptance
-                "Rejected" -> EventType.Rejection
-                "Abandoned" -> EventType.Abandoned
-                else -> EventType.Irrelevant
-            }
-        return EventType.Irrelevant
+        val key = before?.name to after?.name
+        return eventTypeMatrix.getOrDefault(key, EventType.Irrelevant)
     }

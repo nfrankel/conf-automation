@@ -9,15 +9,16 @@ import java.time.format.DateTimeFormatter
 
 class AddSheetRow(private val props: AppProperties) : JavaDelegate {
 
+    private val client = Sheets
+        .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
+        .build()
+
     override fun execute(execution: DelegateExecution) {
-        val client = Sheets
-            .Builder(TRANSPORT, JSON_FACTORY, props.toCredential())
-            .build()
-        val firstEmptyRow = getFirstEmptyRow(client)
-        updateInPlace(client, execution, firstEmptyRow)
+        val firstEmptyRow = getFirstEmptyRow()
+        updateInPlace(execution, firstEmptyRow)
     }
 
-    private fun updateInPlace(client: Sheets, execution: DelegateExecution, row: Int) {
+    private fun updateInPlace(execution: DelegateExecution, row: Int) {
         val conference = execution.conference
         val hyperlinked = "=HYPERLINK(\"${conference.website}\",\"${conference.name}\")"
         val formattedStartDate = DateTimeFormatter.ISO_LOCAL_DATE.format(conference.startDate)
@@ -41,7 +42,7 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
             }
     }
 
-    private fun getFirstEmptyRow(client: Sheets): Int {
+    private fun getFirstEmptyRow(): Int {
         val values = client.Spreadsheets().values()
             .get(props.google.sheetId, "${Column.CONFERENCE.col}3:${Column.CONFERENCE.col}")
             .execute()

@@ -3,10 +3,3 @@ spring:
     active: local
 application:
   speaker: Nicolas Fränkel
-  trello:
-    ips:
-      - 107.23.104.115
-      - 107.23.149.70
-      - 54.152.166.250
-      - 54.164.77.56
-      - 54.209.149.230

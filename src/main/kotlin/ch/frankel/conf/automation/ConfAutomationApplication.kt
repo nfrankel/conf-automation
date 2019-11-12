@@ -14,7 +14,6 @@ class ConfAutomationApplication
 
 fun beans() = beans {
     bean { routes(ref()) }
-    bean { WhitelistIPFilterRegistrationBean(ref()) }
     bean { CustomFieldsInitializer(ref()) }
     bean("computeEventStatus") { computeEventStatus }
     bean("removeDueDate") { RemoveDueDate(ref()) }
@@ -24,6 +23,9 @@ fun beans() = beans {
     bean("removeCalendarEntry") { RemoveCalendarEntry(ref()) }
     bean("updateSheetRow") { UpdateSheetRow(ref()) }
     bean("updateCalendarEntry") { UpdateCalendarEntry((ref())) }
+    profile("production") {
+        bean { WhitelistIPFilterRegistrationBean(ref()) }
+    }
 }
 
 fun routes(runtimeService: RuntimeService) =

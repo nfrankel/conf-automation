@@ -9,5 +9,10 @@ application:
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
+  devtools:
+    add-properties: false
+  h2:
+    console:
+      enabled: false
 server:
   forward-headers-strategy: framework

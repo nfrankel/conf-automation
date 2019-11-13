@@ -4,8 +4,11 @@ import ch.frankel.conf.automation.action.*
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
+import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
+import org.springframework.core.env.Environment
 import org.springframework.web.servlet.function.router
 
 @SpringBootApplication
@@ -24,6 +27,7 @@ fun beans() = beans {
     bean("updateSheetRow") { UpdateSheetRow(ref()) }
     bean("updateCalendarEntry") { UpdateCalendarEntry((ref())) }
     profile("production") {
+        bean { productionDatasource(ref(), ref()) }
         bean { WhitelistIPFilterRegistrationBean(ref()) }
     }
 }

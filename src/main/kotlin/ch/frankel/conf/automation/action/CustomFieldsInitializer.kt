@@ -27,9 +27,9 @@ class CustomFieldsInitializer(props: AppProperties) {
             it.id to it.name
         }?.toMap()
     }
-}
 
-data class CustomField(
-    var id: String,
-    var name: String
-)
+    private data class CustomField(
+        var id: String,
+        var name: String
+    )
+}

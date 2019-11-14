@@ -6,12 +6,12 @@ import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.slf4j.LoggerFactory
 import org.springframework.web.client.RestTemplate
 
-private val LOGGER = LoggerFactory.getLogger("ch.frankel.conf.automation.action.RemoveDueDate")
-
 class RemoveDueDate(private val props: AppProperties) : JavaDelegate {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(execution: DelegateExecution) {
-        LOGGER.debug("[${execution.processInstanceId}] Start action of removing due date")
+        logger.debug("[${execution.processInstanceId}] Start action of removing due date")
         val params = mapOf("id" to execution.event.cardId,
             "key" to props.trello.key,
             "token" to props.trello.token)
@@ -19,6 +19,6 @@ class RemoveDueDate(private val props: AppProperties) : JavaDelegate {
             "https://api.trello.com/1/cards/{id}/due?key={key}&token={token}",
             "{ 'value': null }",
             params)
-        LOGGER.debug("[${execution.processInstanceId}] Request to remove due date has been sent")
+        logger.debug("[${execution.processInstanceId}] Request to remove due date has been sent")
     }
 }

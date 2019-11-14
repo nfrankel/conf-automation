@@ -15,14 +15,13 @@ enum class Status {
 }
 
 internal val computeEventStatus = JavaDelegate {
-    LOGGER.info("[${it.processInstanceId}] Received event ${it.event}")
+    val logger = LoggerFactory.getLogger("ch.frankel.conf.automation.Status")
+    logger.info("[${it.processInstanceId}] Received event ${it.event}")
     with(it.event.status) {
         it.setVariable(BPMN_STATUS, this)
-        LOGGER.info("[${it.processInstanceId}] Event status is ${this}")
+        logger.info("[${it.processInstanceId}] Event status is ${this}")
     }
 }
-
-private val LOGGER = LoggerFactory.getLogger("ch.frankel.conf.automation.Status")
 
 private val eventStatusMatrix = mapOf(
     ("Backlog" to "Submitted") to Status.Submitted,

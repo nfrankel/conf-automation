@@ -4,11 +4,8 @@ import ch.frankel.conf.automation.action.*
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
-import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
-import org.springframework.core.env.Environment
 import org.springframework.web.servlet.function.router
 
 @SpringBootApplication
@@ -16,7 +13,7 @@ import org.springframework.web.servlet.function.router
 class ConfAutomationApplication
 
 fun beans() = beans {
-    bean { routes(ref()) }
+    bean { routes(ref(), ref()) }
     bean { CustomFieldsInitializer(ref()) }
     bean("computeEventStatus") { computeEventStatus }
     bean("removeDueDate") { RemoveDueDate(ref()) }
@@ -32,11 +29,13 @@ fun beans() = beans {
     }
 }
 
-fun routes(runtimeService: RuntimeService) =
+fun routes(runtimeService: RuntimeService, props: AppProperties) =
     router {
-        val handler = TriggerHandler(runtimeService)
-        POST("/trigger", handler::post)
-        HEAD("/trigger", handler::head)
+        val trigger = TriggerHandler(runtimeService)
+        POST("/trigger", trigger::post)
+        HEAD("/trigger", trigger::head)
+        val register = RegisterHandler(props)
+        POST("/register", register::post)
     }
 
 fun main(args: Array<String>) {

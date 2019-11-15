@@ -14,6 +14,7 @@ class AddCalendarEntry(props: AppProperties) : JavaDelegate {
 
     private val client = Calendar
         .Builder(TRANSPORT, JSON_FACTORY, props.credential)
+        .setApplicationName(props.name)
         .build()
 
     private val google = props.google

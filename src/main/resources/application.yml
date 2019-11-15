@@ -1,2 +1,6 @@
 application:
   speaker: Nicolas Fränkel
+  name: Conference workflow automation
+spring:
+  application:
+    name: ${application.name}

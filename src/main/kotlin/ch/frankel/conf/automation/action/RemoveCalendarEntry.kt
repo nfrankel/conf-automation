@@ -10,6 +10,7 @@ class RemoveCalendarEntry(private val props: AppProperties) : JavaDelegate {
     override fun execute(execution: DelegateExecution) {
         val client = Calendar
             .Builder(TRANSPORT, JSON_FACTORY, props.credential)
+            .setApplicationName(props.name)
             .build()
         findCalendarEntry(client, props.google, execution.conference)?.let {
             client.events().delete(props.google.calendarId, it.id).execute()

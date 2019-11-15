@@ -10,6 +10,7 @@ class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
 
     private val client = Sheets
         .Builder(TRANSPORT, JSON_FACTORY, props.credential)
+        .setApplicationName(props.name)
         .build()
 
     override fun execute(execution: DelegateExecution) {

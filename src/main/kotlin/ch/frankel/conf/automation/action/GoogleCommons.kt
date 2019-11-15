@@ -7,6 +7,7 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.util.*
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
+import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import java.io.StringReader
@@ -31,6 +32,18 @@ internal val AppProperties.credential: GoogleCredential
         serviceAccountPrivateKey = google.privateKey.toPrivateKey()
         serviceAccountScopes = listOf(CalendarScopes.CALENDAR, SheetsScopes.SPREADSHEETS)
     }.build()
+
+internal val AppProperties.sheetsClient: Sheets
+    get() = Sheets
+        .Builder(TRANSPORT, JSON_FACTORY, credential)
+        .setApplicationName(name)
+        .build()
+
+internal val AppProperties.calendarClient: Calendar
+    get() = Calendar
+        .Builder(TRANSPORT, JSON_FACTORY, credential)
+        .setApplicationName(name)
+        .build()
 
 internal fun findCalendarEntry(client: Calendar,
                                google: GoogleProperties,

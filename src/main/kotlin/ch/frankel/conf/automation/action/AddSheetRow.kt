@@ -1,17 +1,13 @@
 package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.AppProperties
-import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 
 class AddSheetRow(private val props: AppProperties) : JavaDelegate {
 
-    private val client = Sheets
-        .Builder(TRANSPORT, JSON_FACTORY, props.credential)
-        .setApplicationName(props.name)
-        .build()
+    private val client = props.sheetsClient
 
     override fun execute(execution: DelegateExecution) {
         val firstEmptyRow = getFirstEmptyRow()

@@ -1,19 +1,14 @@
 package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.*
-import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 
 class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
 
-    private val client = Sheets
-        .Builder(TRANSPORT, JSON_FACTORY, props.credential)
-        .setApplicationName(props.name)
-        .build()
-
     override fun execute(execution: DelegateExecution) {
+        val client = props.sheetsClient
         val formattedStartDate = execution.conference.startDate.formatted
         val formattedEndDate = execution.conference.endDate.formatted
         val status =

@@ -2,7 +2,6 @@ package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.AppProperties
 import com.google.api.client.util.DateTime
-import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.EventDateTime
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -12,11 +11,7 @@ import java.time.format.DateTimeFormatter
 
 class AddCalendarEntry(props: AppProperties) : JavaDelegate {
 
-    private val client = Calendar
-        .Builder(TRANSPORT, JSON_FACTORY, props.credential)
-        .setApplicationName(props.name)
-        .build()
-
+    private val client = props.calendarClient
     private val google = props.google
 
     override fun execute(execution: DelegateExecution) {

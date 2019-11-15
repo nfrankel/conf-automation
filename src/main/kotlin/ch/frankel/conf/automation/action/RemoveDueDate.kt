@@ -12,13 +12,14 @@ class RemoveDueDate(private val props: AppProperties) : JavaDelegate {
 
     override fun execute(execution: DelegateExecution) {
         logger.debug("[${execution.processInstanceId}] Start action of removing due date")
-        val params = mapOf("id" to execution.event.cardId,
+        val request = mapOf(
+            "id" to execution.event.cardId,
             "key" to props.trello.key,
-            "token" to props.trello.token)
+            "token" to props.trello.token,
+            "value" to null).toEntity()
         RestTemplate().put(
-            "https://api.trello.com/1/cards/{id}/due?key={key}&token={token}",
-            "{ 'value': null }",
-            params)
+            "https://api.trello.com/1/cards/${execution.event.cardId}/due",
+            request)
         logger.debug("[${execution.processInstanceId}] Request to remove due date has been sent")
     }
 }

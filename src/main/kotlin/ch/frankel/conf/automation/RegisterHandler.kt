@@ -1,8 +1,8 @@
 package ch.frankel.conf.automation
 
+import ch.frankel.conf.automation.action.toEntity
 import com.google.gson.Gson
 import org.slf4j.LoggerFactory
-import org.springframework.http.*
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
@@ -14,28 +14,20 @@ class RegisterHandler(props: AppProperties) {
 
     fun post(request: ServerRequest): ServerResponse {
         logger.info("Received registration request from ${request.remoteAddress()}")
-        return with(RestTemplate().exchange(
-            "https://api.trello.com/1/tokens/{token}/webhooks",
-            HttpMethod.POST,
-            RegisterRequest(
-                trello.key,
-                trello.boardId,
-                request.callbackUrl,
-                "Conference workflow automation"
-            ).toHttpEntity(),
-            RegisterResponse::class.java,
-            mapOf("token" to trello.token))) {
-            logger.info("Registration response from Trello: $body")
-            ServerResponse.accepted().body(body.toJson())
+        val requestEntity = mapOf(
+            "key" to trello.key,
+            "idModel" to trello.boardId,
+            "callbackURL" to request.callbackUrl,
+            "description" to "Conference workflow automation").toEntity()
+        return with(RestTemplate().postForObject(
+            "https://api.trello.com/1/tokens/${trello.token}/webhooks",
+            requestEntity,
+            RegisterResponse::class.java
+        )) {
+            logger.info("Registration response from Trello: $this")
+            ServerResponse.accepted().body(toJson())
         }
     }
-
-    private data class RegisterRequest(
-        val key: String,
-        val idModel: String,
-        val callbackURL: String,
-        val description: String
-    )
 
     private data class RegisterResponse(
         var id: String,
@@ -51,11 +43,6 @@ class RegisterHandler(props: AppProperties) {
             val servletRequest = servletRequest()
             return "${servletRequest.scheme}://${servletRequest.serverName}:${servletRequest.serverPort}/trigger"
         }
-
-    private fun RegisterRequest.toHttpEntity() = HttpEntity(
-        toJson(),
-        HttpHeaders().apply { contentType = MediaType.APPLICATION_JSON }
-    )
 
     private fun Any?.toJson() = Gson().toJson(this)
 }

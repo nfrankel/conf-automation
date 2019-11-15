@@ -16,16 +16,13 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
 
     private fun updateInPlace(execution: DelegateExecution, row: Int) {
         val conference = execution.conference
-        val hyperlinked = "=HYPERLINK(\"${conference.website}\",\"${conference.name}\")"
-        val formattedStartDate = conference.startDate.formatted
-        val formattedEndDate = conference.endDate.formatted
         mapOf(
-            Column.CONFERENCE.col to listOf(hyperlinked),
-            Column.SPEAKER.col to listOf(props.speaker),
-            Column.LOCATION_COUNTRY.col to listOf(conference.location),
-            Column.START_DATE.col to listOf(formattedStartDate),
-            Column.END_DATE.col to listOf(formattedEndDate),
-            Column.STATUS.col to listOf("Submitted"))
+            Column.CONFERENCE to conference.hyperlink,
+            Column.SPEAKER to props.speaker,
+            Column.LOCATION_COUNTRY to conference.location,
+            Column.START_DATE to conference.startDate.formatted,
+            Column.END_DATE to conference.endDate.formatted,
+            Column.STATUS to "Submitted")
             .forEach { (col, values) ->
                 val range = ValueRange().setValues(listOf(values))
                 client.Spreadsheets().values()
@@ -36,7 +33,17 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
             }
     }
 
+    private val Conference.hyperlink: String
+        get() = "=HYPERLINK(\"$website\",\"$name\")"
+
+    private infix fun Column.to(string: String): Pair<String, List<String>> {
+        return col to listOf(string)
+    }
+
     private fun getFirstEmptyRow(): Int {
+        // Range starts from 1
+        // And there's one blank line that isn't computed by Google Sheets
+        val additionalRows = 3
         val values = client.Spreadsheets().values()
             .get(props.google.sheetId, "${Column.CONFERENCE.col}3:${Column.CONFERENCE.col}")
             .execute()
@@ -52,9 +59,5 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
         END_DATE("I"),
         STATUS("O")
     }
-
-    // Range starts from 1
-    // And there's one blank line that isn't computed by Google Sheets
-    private val additionalRows = 3
 }
 

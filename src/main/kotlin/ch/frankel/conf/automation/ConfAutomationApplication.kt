@@ -6,6 +6,7 @@ import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.servlet.function.router
 
 @SpringBootApplication
@@ -13,8 +14,9 @@ import org.springframework.web.servlet.function.router
 class ConfAutomationApplication
 
 fun beans() = beans {
-    bean { routes(ref(), ref()) }
-    bean { CustomFieldsInitializer(ref()) }
+    bean { trelloClient(ref()) }
+    bean { routes(ref(), ref(), ref()) }
+    bean{ CustomFieldsInitializer(ref(), ref()) }
     bean("computeEventStatus") { computeEventStatus }
     bean("removeDueDate") { RemoveDueDate(ref()) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
@@ -29,12 +31,14 @@ fun beans() = beans {
     }
 }
 
-fun routes(runtimeService: RuntimeService, props: AppProperties) =
+fun routes(runtimeService: RuntimeService,
+           props: AppProperties,
+           template: RestTemplate) =
     router {
         val trigger = TriggerHandler(runtimeService)
         POST("/trigger", trigger::post)
         HEAD("/trigger", trigger::head)
-        val register = RegisterHandler(props)
+        val register = RegisterHandler(props, template)
         POST("/register", register::post)
     }
 

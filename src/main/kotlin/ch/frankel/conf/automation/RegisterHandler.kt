@@ -7,7 +7,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 
-class RegisterHandler(props: AppProperties) {
+class RegisterHandler(props: AppProperties, private val template: RestTemplate) {
 
     private val trello = props.trello
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -15,15 +15,16 @@ class RegisterHandler(props: AppProperties) {
     fun post(request: ServerRequest): ServerResponse {
         logger.info("Received registration request from ${request.remoteAddress()}")
         val requestEntity = mapOf(
-            "key" to trello.key,
             "idModel" to trello.boardId,
             "callbackURL" to request.callbackUrl,
             "description" to "Conference workflow automation").toEntity()
-        return with(RestTemplate().postForObject(
-            "https://api.trello.com/1/tokens/${trello.token}/webhooks",
-            requestEntity,
-            RegisterResponse::class.java
-        )) {
+        return with(
+            template.postForObject(
+                "/tokens/{token}/webhooks?key={key}",
+                requestEntity,
+                RegisterResponse::class.java
+            )
+        ) {
             logger.info("Registration response from Trello: $this")
             ServerResponse.accepted().body(toJson())
         }

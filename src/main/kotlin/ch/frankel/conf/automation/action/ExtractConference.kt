@@ -1,14 +1,13 @@
 package ch.frankel.conf.automation.action
 
-import ch.frankel.conf.automation.AppProperties
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.http.*
 import org.springframework.web.client.RestTemplate
 import kotlin.collections.List
 
-class ExtractConference(private val props: AppProperties,
-                        private val fieldsInitializer: CustomFieldsInitializer): JavaDelegate {
+class ExtractConference(private val fieldsInitializer: CustomFieldsInitializer,
+                        private val template: RestTemplate): JavaDelegate {
 
     companion object {
         const val BPMN_CONFERENCE = "conference"
@@ -22,15 +21,12 @@ class ExtractConference(private val props: AppProperties,
 
     private val DelegateExecution.customFields: List<Field<out Any>>
         get() {
-            val params = mapOf("id" to event.cardId,
-                "key" to props.trello.key,
-                "token" to props.trello.token)
-            val response = RestTemplate().exchange(
-                "https://api.trello.com/1/cards/{id}/customFieldItems?key={key}&token={token}",
+            val response = template.exchange(
+                "/cards/{id}/customFieldItems?key={key}&token={token}",
                 HttpMethod.GET,
                 HttpEntity<Any>(HttpHeaders()),
                 typeRef<List<CustomFieldItem>>(),
-                params
+                mapOf("id" to event.cardId)
             )
             return response.body.orEmpty().map {
                 val fieldName = fieldsInitializer.fields?.get(it.idCustomField)

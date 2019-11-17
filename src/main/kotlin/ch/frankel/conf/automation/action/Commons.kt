@@ -19,7 +19,7 @@ internal fun <K, V> Map<K, V>.toEntity(headers: HttpHeaders = HttpHeaders()) =
     HttpEntity(CollectionUtils.toMultiValueMap(
         map {
             if (it.value != null) it.key to listOf(it.value)
-            else it.key to null
+            else it.key to listOf()
         }.toMap()
     ), headers)
 

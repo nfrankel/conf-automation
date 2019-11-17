@@ -7,12 +7,14 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 
 internal fun trelloClient(props: AppProperties): RestTemplate {
     val customizer = RestTemplateCustomizer {
-        val params = mapOf(
-            "key" to props.trello.key,
-            "token" to props.trello.token
-        )
         it.uriTemplateHandler = DefaultUriBuilderFactory("https://api.trello.com/1")
-            .apply { setDefaultUriVariables(params) }
+            .apply {
+                val params = mapOf(
+                    "key" to props.trello.key,
+                    "token" to props.trello.token
+                )
+                setDefaultUriVariables(params)
+            }
     }
     return RestTemplateBuilder(customizer).build()
 }

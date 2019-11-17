@@ -56,7 +56,7 @@ internal fun findCalendarEntry(client: Calendar,
         .items
         .find {
             it.summary == "${conference.name} (${conference.location})"
-            it.creator.email == google.clientEmail
+                && it.creator.email == google.clientEmail
         }
 
 private fun LocalDate.toDateTime(): DateTime {

@@ -15,8 +15,11 @@ class AddCalendarEntry(props: AppProperties) : JavaDelegate {
     private val google = props.google
 
     override fun execute(execution: DelegateExecution) {
-        val event = execution.conference.toCalendarEvent()
-        client.events().insert(google.calendarId, event).execute()
+        val entry = findCalendarEntry(client, google, execution.conference)
+        if (entry == null) {
+            val event = execution.conference.toCalendarEvent()
+            client.events().insert(google.calendarId, event).execute()
+        }
     }
 
     private fun Conference.toCalendarEvent() = Event().apply {

@@ -6,6 +6,11 @@ application:
       - 54.152.166.250
       - 54.164.77.56
       - 54.209.149.230
+      - 18.234.32.224
+      - 18.234.32.225
+      - 18.234.32.226
+      - 18.234.32.227
+      - 18.234.32.228
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver

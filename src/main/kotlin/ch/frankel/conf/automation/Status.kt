@@ -19,7 +19,7 @@ internal val computeEventStatus = JavaDelegate {
     logger.info("[${it.processInstanceId}] Received event ${it.event}")
     with(it.event.status) {
         it.setVariable(BPMN_STATUS, this)
-        logger.info("[${it.processInstanceId}] Event status is ${this}")
+        logger.info("[${it.processInstanceId}] Event status is $this")
     }
 }
 

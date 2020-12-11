@@ -48,7 +48,7 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
             .get(props.google.sheetId, "${Column.CONFERENCE.col}3:${Column.CONFERENCE.col}")
             .execute()
             .values
-        return (values.last() as Collection<Any>).size + additionalRows
+        return (values.last() as Collection<*>).size + additionalRows
     }
 
     private enum class Column(val col: String) {

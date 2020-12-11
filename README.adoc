@@ -73,12 +73,13 @@ Search for the `private_key` field
 
 | `application.trello.ips`
 | List of white-listed IPs from which webhooks requests will be accepted.
-They should belong to https://developers.trello.com/page/webhooks#section-webhook-sources[Trello^].
+They should belong to https://developer.atlassian.com/cloud/trello/guides/rest-api/webhooks/#webhook-sources[Trello^].
 a|
 - `107.23.104.115`
 - `107.23.149.70`
 - `54.152.166.250`
 - `54.164.77.56`
 - `54.209.149.230`
+- `18.234.32.224/28`
 
 |===

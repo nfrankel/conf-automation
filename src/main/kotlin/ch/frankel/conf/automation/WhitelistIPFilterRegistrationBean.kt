@@ -14,7 +14,7 @@ class WhitelistIPFilterRegistrationBean(props: AppProperties) : FilterRegistrati
 
     init {
         filter = Filter { request, response, chain ->
-            val remoteAddress = (request as HttpServletRequest).getHeader("X-Forwarded-For")
+            val remoteAddress = (request as HttpServletRequest).remoteAddr
             logger.info("Request received from $remoteAddress")
             if (!whitelist.contains(remoteAddress)) {
                 logger.info("IP $remoteAddress is not white-listed, denying")

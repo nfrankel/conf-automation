@@ -1,5 +1,6 @@
 package ch.frankel.conf.automation
 
+import camundajar.impl.com.google.gson.Gson
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.stereotype.Component
 
@@ -21,9 +22,10 @@ class TrelloProperties {
 }
 
 class GoogleProperties {
+    lateinit var json: String
     lateinit var sheetId: String
     lateinit var calendarId: String
-    lateinit var privateKeyId: String
-    lateinit var privateKey: String
-    lateinit var clientEmail: String
+    val clientEmail: String by lazy {
+        Gson().fromJson(json, Map::class.java)["client_email"] as String
+    }
 }

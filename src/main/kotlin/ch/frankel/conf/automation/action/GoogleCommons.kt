@@ -3,16 +3,14 @@ package ch.frankel.conf.automation.action
 import ch.frankel.conf.automation.AppProperties
 import ch.frankel.conf.automation.GoogleProperties
 import ch.frankel.conf.automation.action.ExtractConference.Companion.BPMN_CONFERENCE
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
-import com.google.api.client.util.*
+import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.SheetsScopes
+import com.google.auth.http.HttpCredentialsAdapter
+import com.google.auth.oauth2.GoogleCredentials
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import java.io.StringReader
-import java.security.PrivateKey
-import java.security.spec.PKCS8EncodedKeySpec
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -23,31 +21,27 @@ internal val DelegateExecution.conference: Conference
 internal val LocalDate.formatted: String
     get() = DateTimeFormatter.ISO_LOCAL_DATE.format(this)
 
-internal val AppProperties.credential: GoogleCredential
-    get() = GoogleCredential.Builder().apply {
-        transport = TRANSPORT
-        jsonFactory = JSON_FACTORY
-        serviceAccountId = google.clientEmail
-        serviceAccountPrivateKeyId = google.privateKeyId
-        serviceAccountPrivateKey = google.privateKey.toPrivateKey()
-        serviceAccountScopes = listOf(CalendarScopes.CALENDAR, SheetsScopes.SPREADSHEETS)
-    }.build()
+internal val AppProperties.credential: GoogleCredentials
+    get() = GoogleCredentials.fromStream(google.json.byteInputStream())
+        .createScoped(CalendarScopes.CALENDAR, SheetsScopes.SPREADSHEETS)
 
 internal val AppProperties.sheetsClient: Sheets
     get() = Sheets
-        .Builder(TRANSPORT, JSON_FACTORY, credential)
+        .Builder(TRANSPORT, JSON_FACTORY, HttpCredentialsAdapter(credential))
         .setApplicationName(name)
         .build()
 
 internal val AppProperties.calendarClient: Calendar
     get() = Calendar
-        .Builder(TRANSPORT, JSON_FACTORY, credential)
+        .Builder(TRANSPORT, JSON_FACTORY, HttpCredentialsAdapter(credential))
         .setApplicationName(name)
         .build()
 
-internal fun findCalendarEntry(client: Calendar,
-                               google: GoogleProperties,
-                               conference: Conference) =
+internal fun findCalendarEntry(
+    client: Calendar,
+    google: GoogleProperties,
+    conference: Conference
+) =
     client.events()
         .list(google.calendarId)
         .setTimeMin(conference.startDate.minusDays(1).toDateTime())
@@ -62,13 +56,4 @@ internal fun findCalendarEntry(client: Calendar,
 private fun LocalDate.toDateTime(): DateTime {
     val millis = atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
     return DateTime(millis)
-}
-
-/* Inspired from com.google.api.client.googleapis.auth.oauth2.GoogleCredential.privateKeyFromPkcs8() .*/
-private fun String.toPrivateKey(): PrivateKey {
-    val pemReader = PemReader(StringReader(this))
-    val section = pemReader.readNextSection("PRIVATE KEY")
-    val keySpec = PKCS8EncodedKeySpec(section.base64DecodedBytes)
-    val keyFactory = SecurityUtils.getRsaKeyFactory()
-    return keyFactory.generatePrivate(keySpec)
 }

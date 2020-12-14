@@ -26,7 +26,6 @@ fun beans() = beans {
     bean("updateSheetRow") { UpdateSheetRow(ref()) }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref()) }
     profile("production") {
-        bean { productionDatasource(ref(), ref()) }
         bean { WhitelistIPFilterRegistrationBean(ref()) }
     }
 }

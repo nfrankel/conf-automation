@@ -1,7 +1,7 @@
 package ch.frankel.conf.automation
 
 import ch.frankel.conf.automation.action.toEntity
-import com.google.gson.Gson
+import camundajar.impl.com.google.gson.Gson
 import org.slf4j.LoggerFactory
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.servlet.function.ServerRequest

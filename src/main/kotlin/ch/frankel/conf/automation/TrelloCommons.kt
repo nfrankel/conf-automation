@@ -1,20 +1,13 @@
 package ch.frankel.conf.automation
 
-import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.boot.web.client.RestTemplateCustomizer
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.util.DefaultUriBuilderFactory
+import org.springframework.boot.web.reactive.function.client.WebClientCustomizer
 
-internal fun trelloClient(props: AppProperties): RestTemplate {
-    val customizer = RestTemplateCustomizer {
-        it.uriTemplateHandler = DefaultUriBuilderFactory("https://api.trello.com/1")
-            .apply {
-                val params = mapOf(
-                    "key" to props.trello.key,
-                    "token" to props.trello.token
-                )
-                setDefaultUriVariables(params)
-            }
-    }
-    return RestTemplateBuilder(customizer).build()
+internal fun webClientCustomizer(props: AppProperties) = WebClientCustomizer {
+    it.baseUrl("https://api.trello.com/1")
+    it.defaultUriVariables(
+        mapOf(
+            "key" to props.trello.key,
+            "token" to props.trello.token
+        )
+    )
 }

@@ -1,33 +1,37 @@
 package ch.frankel.conf.automation
 
-import ch.frankel.conf.automation.action.toEntity
 import camundajar.impl.com.google.gson.Gson
-import org.slf4j.LoggerFactory
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.servlet.function.ServerRequest
-import org.springframework.web.servlet.function.ServerResponse
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.server.ServerRequest
+import org.springframework.web.reactive.function.server.ServerResponse
+import reactor.core.publisher.Mono
+import reactor.util.Loggers
 
-class RegisterHandler(props: AppProperties, private val template: RestTemplate) {
+class RegisterHandler(props: AppProperties, builder: WebClient.Builder) {
 
     private val trello = props.trello
-    private val logger = LoggerFactory.getLogger(this::class.java)
+    private val logger = Loggers.getLogger(this::class.java)
+    private val client = builder.build()
 
-    fun post(request: ServerRequest): ServerResponse {
+    fun post(request: ServerRequest): Mono<ServerResponse> {
         logger.info("Received registration request from ${request.remoteAddress()}")
         val requestEntity = mapOf(
             "idModel" to trello.boardId,
             "callbackURL" to request.callbackUrl,
-            "description" to "Conference workflow automation").toEntity()
-        return with(
-            template.postForObject(
-                "/tokens/{token}/webhooks?key={key}",
-                requestEntity,
-                RegisterResponse::class.java
-            )
-        ) {
-            logger.info("Registration response from Trello: $this")
-            ServerResponse.accepted().body(toJson())
-        }
+            "description" to "Conference workflow automation"
+        )
+        return client.post()
+            .uri("/tokens/{token}/webhooks?key={key}")
+            .body(BodyInserters.fromValue(requestEntity))
+            .retrieve()
+            .bodyToMono(RegisterResponse::class.java)
+            .flatMap {
+                logger.info("Registration response from Trello: $it")
+                ServerResponse.accepted().body(
+                    BodyInserters.fromValue(it.toJson())
+                )
+            }
     }
 
     private data class RegisterResponse(
@@ -41,8 +45,8 @@ class RegisterHandler(props: AppProperties, private val template: RestTemplate) 
 
     private val ServerRequest.callbackUrl: String
         get() {
-            val servletRequest = servletRequest()
-            return "${servletRequest.scheme}://${servletRequest.serverName}:${servletRequest.serverPort}/trigger"
+            val uri = uri()
+            return "${uri.scheme}://${uri.host}:${uri.port}/trigger"
         }
 
     private fun Any?.toJson() = Gson().toJson(this)

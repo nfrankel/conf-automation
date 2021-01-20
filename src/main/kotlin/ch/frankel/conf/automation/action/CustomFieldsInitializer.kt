@@ -1,20 +1,16 @@
 package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.AppProperties
-import org.springframework.http.*
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Flux
 
-class CustomFieldsInitializer(props: AppProperties, template: RestTemplate) {
+class CustomFieldsInitializer(props: AppProperties, builder: WebClient.Builder) {
 
-    val fields = template.exchange(
-        "/boards/{id}/customFields?key={key}&token={token}",
-        HttpMethod.GET,
-        HttpEntity.EMPTY,
-        typeRef<List<CustomField>>(),
-        mapOf("id" to props.trello.boardShortLink)
-    ).body.orEmpty()
+    val fields: Flux<Pair<String, String>> = builder.build().get()
+        .uri("/boards/${props.trello.boardShortLink}/customFields?key={key}&token={token}")
+        .retrieve()
+        .bodyToFlux(CustomField::class.java)
         .map { it.id to it.name }
-        .toMap()
 
     private data class CustomField(
         var id: String,

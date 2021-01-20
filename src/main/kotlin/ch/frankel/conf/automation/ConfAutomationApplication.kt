@@ -6,17 +6,18 @@ import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.servlet.function.router
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.server.router
 
 @SpringBootApplication
 @EnableProcessApplication
 class ConfAutomationApplication
 
 fun beans() = beans {
-    bean { trelloClient(ref()) }
-    bean { routes(ref(), ref(), ref()) }
-    bean{ CustomFieldsInitializer(ref(), ref()) }
+    bean { webClientCustomizer(ref()) }
+    bean { WhitelistIPFilterFunction(ref()) }
+    bean { routes(ref(), ref(), ref(), ref()) }
+    bean { CustomFieldsInitializer(ref(), ref()) }
     bean("computeEventStatus") { computeEventStatus }
     bean("removeDueDate") { RemoveDueDate(ref()) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
@@ -26,20 +27,25 @@ fun beans() = beans {
     bean("updateSheetRow") { UpdateSheetRow(ref()) }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref()) }
     profile("production") {
-        bean { WhitelistIPFilterRegistrationBean(ref()) }
+        bean { WhitelistIPFilterFunction(ref()) }
     }
 }
 
-fun routes(runtimeService: RuntimeService,
-           props: AppProperties,
-           template: RestTemplate) =
+fun routes(
+    runtimeService: RuntimeService,
+    props: AppProperties,
+    whiteListIP: WhitelistIPFilterFunction,
+    builder: WebClient.Builder
+) = router {
+    val trigger = TriggerHandler(runtimeService)
+    POST("/trigger", trigger::post)
+    HEAD("/trigger", trigger::head)
+}.and(
     router {
-        val trigger = TriggerHandler(runtimeService)
-        POST("/trigger", trigger::post)
-        HEAD("/trigger", trigger::head)
-        val register = RegisterHandler(props, template)
+        val register = RegisterHandler(props, builder)
         POST("/register", register::post)
-    }
+    }.filter(whiteListIP)
+)
 
 fun main(args: Array<String>) {
     runApplication<ConfAutomationApplication>(*args) {

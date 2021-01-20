@@ -2,38 +2,45 @@ package ch.frankel.conf.automation.action
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpMethod
-import org.springframework.web.client.RestTemplate
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 
-class ExtractConference(private val fieldsInitializer: CustomFieldsInitializer,
-                        private val template: RestTemplate) : JavaDelegate {
+class ExtractConference(
+    private val fieldsInitializer: CustomFieldsInitializer,
+    builder: WebClient.Builder
+) : JavaDelegate {
+
+    private val client = builder.build()
 
     companion object {
         const val BPMN_CONFERENCE = "conference"
     }
 
     override fun execute(execution: DelegateExecution) {
-        val fields = execution.customFields
+        val fields = execution.customFields.collectList().block() ?: emptyList()
         val name = execution.event.action.data.card.name
         execution.setVariable(BPMN_CONFERENCE, Conference(name, fields))
     }
 
-    private val DelegateExecution.customFields: List<Field<out Any>>
-        get() = template.exchange(
-            "/cards/{id}/customFieldItems?key={key}&token={token}",
-            HttpMethod.GET,
-            HttpEntity.EMPTY,
-            typeRef<List<CustomFieldItem>>(),
-            mapOf("id" to event.cardId)
-        ).body.orEmpty()
+    private val DelegateExecution.customFields: Flux<Field<out Any>>
+        get() = client.get()
+            .uri("/cards/${event.cardId}/customFieldItems?key={key}&token={token}")
+            .retrieve()
+            .bodyToFlux(CustomFieldItem::class.java)
+            .flatMap { getField(it) }
+            .filter { it !is IrrelevantField }
+
+    private fun getField(item: CustomFieldItem): Mono<Field<out Any>> =
+        fieldsInitializer.fields
+            .filter { it.first == item.idCustomField }
             .map {
-                val fieldName = fieldsInitializer.fields[it.idCustomField]
+                val name = it.second
                 when {
-                    it.value?.text != null && fieldName == "Site" -> Website(it)
-                    it.value?.date != null && fieldName == "Start date" -> StartDate(it)
-                    it.value?.date != null && fieldName == "End date" -> EndDate(it)
+                    item.value?.text != null && name == "Site" -> Website(item)
+                    item.value?.date != null && name == "Start date" -> StartDate(item)
+                    item.value?.date != null && name == "End date" -> EndDate(item)
                     else -> IrrelevantField
                 }
-            }.filter { it !is IrrelevantField }
+            }.single()
 }

@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.server.router
+import org.springframework.web.servlet.function.router
 
 @SpringBootApplication
 @EnableProcessApplication

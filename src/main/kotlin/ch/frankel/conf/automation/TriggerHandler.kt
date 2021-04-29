@@ -1,9 +1,8 @@
 package ch.frankel.conf.automation
 
 import org.camunda.bpm.engine.RuntimeService
-import org.springframework.web.reactive.function.server.ServerRequest
-import org.springframework.web.reactive.function.server.ServerResponse
-import reactor.core.publisher.Mono
+import org.springframework.web.servlet.function.ServerRequest
+import org.springframework.web.servlet.function.ServerResponse
 
 
 class TriggerHandler(private val runtimeService: RuntimeService) {
@@ -12,15 +11,15 @@ class TriggerHandler(private val runtimeService: RuntimeService) {
         const val BPMN_EVENT = "event"
     }
 
-    fun post(request: ServerRequest): Mono<ServerResponse> {
-        val event = request.bodyToMono(TrelloEvent::class.java).block()
+    fun post(request: ServerRequest): ServerResponse {
+        val event = request.body(TrelloEvent::class.java)
         val params = mapOf(BPMN_EVENT to event)
         val id = runtimeService
             .startProcessInstanceByKey("HandleChange", params)
             .processDefinitionId
         return ServerResponse
             .accepted()
-            .bodyValue("{ id: $id }")
+            .body("{ id: $id }")
     }
 
     /* Required by Trello, as it executes a HEAD request to make sure the endpoint is up. */

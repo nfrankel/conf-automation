@@ -15,7 +15,6 @@ class ConfAutomationApplication
 
 fun beans() = beans {
     bean { webClientCustomizer(ref()) }
-    bean { WhitelistIPFilterFunction(ref()) }
     bean { routes(ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
     bean("computeEventStatus") { computeEventStatus }

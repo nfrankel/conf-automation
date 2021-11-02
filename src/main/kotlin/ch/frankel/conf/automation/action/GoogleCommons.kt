@@ -57,3 +57,17 @@ private fun LocalDate.toDateTime(): DateTime {
     val millis = atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
     return DateTime(millis)
 }
+
+internal enum class Color(val id: String) {
+    Blue("1"),
+    Green("2"),
+    Purple("3"),
+    Red("4"),
+    Yellow("5"),
+    Orange("6"),
+    Turquoise("7"),
+    Gray("8"),
+    BoldBlue("9"),
+    BoldGreen("10"),
+    BoldRed("11")
+}

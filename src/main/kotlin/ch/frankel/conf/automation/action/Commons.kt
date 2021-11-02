@@ -3,15 +3,11 @@ package ch.frankel.conf.automation.action
 import ch.frankel.conf.automation.TrelloEvent
 import ch.frankel.conf.automation.TriggerHandler.Companion.BPMN_EVENT
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
-import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.client.json.gson.GsonFactory
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.springframework.core.ParameterizedTypeReference
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.util.CollectionUtils
 
 internal val TRANSPORT = GoogleNetHttpTransport.newTrustedTransport()
-internal val JSON_FACTORY = JacksonFactory.getDefaultInstance()
+internal val JSON_FACTORY = GsonFactory.getDefaultInstance()
 
 internal val DelegateExecution.event: TrelloEvent
     get() = getVariable(BPMN_EVENT) as TrelloEvent

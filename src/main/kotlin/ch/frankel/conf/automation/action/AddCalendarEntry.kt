@@ -27,6 +27,7 @@ class AddCalendarEntry(props: AppProperties) : JavaDelegate {
         start = this@toCalendarEvent.startDate.toEventDateTime()
         end = this@toCalendarEvent.endDate.toEventDateTime()
         colorId = Color.Gray.id
+        transparency = Availability.Free.value
     }
 
     private fun LocalDate.toEventDateTime(): EventDateTime {

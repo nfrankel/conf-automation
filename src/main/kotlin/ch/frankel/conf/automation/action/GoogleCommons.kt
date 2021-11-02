@@ -71,3 +71,8 @@ internal enum class Color(val id: String) {
     BoldGreen("10"),
     BoldRed("11")
 }
+
+internal enum class Availability(val value: String) {
+    Free("transparent"),
+    Busy("opaque"),
+}

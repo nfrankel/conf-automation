@@ -58,6 +58,7 @@ private fun LocalDate.toDateTime(): DateTime {
     return DateTime(millis)
 }
 
+@Suppress("unused")
 internal enum class Color(val id: String) {
     Blue("1"),
     Green("2"),

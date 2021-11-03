@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter
 
 class AddCalendarEntry(props: AppProperties) : JavaDelegate {
 
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     private val client = props.calendarClient
     private val google = props.google
 
@@ -30,10 +31,7 @@ class AddCalendarEntry(props: AppProperties) : JavaDelegate {
         transparency = Availability.Free.value
     }
 
-    private fun LocalDate.toEventDateTime(): EventDateTime {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        return EventDateTime().apply {
-            date = DateTime(formatter.format(this@toEventDateTime))
-        }
+    private fun LocalDate.toEventDateTime() = EventDateTime().apply {
+        date = DateTime(formatter.format(this@toEventDateTime))
     }
 }

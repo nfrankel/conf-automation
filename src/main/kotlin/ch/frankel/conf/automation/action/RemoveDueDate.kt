@@ -6,9 +6,8 @@ import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.util.Loggers
 
-class RemoveDueDate(builder: WebClient.Builder) : JavaDelegate {
+class RemoveDueDate(private val client: WebClient) : JavaDelegate {
 
-    private val client = builder.build()
     private val logger = Loggers.getLogger(this::class.java)
 
     override fun execute(execution: DelegateExecution) {

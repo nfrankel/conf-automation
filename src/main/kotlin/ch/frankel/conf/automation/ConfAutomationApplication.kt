@@ -19,6 +19,7 @@ fun beans() = beans {
     bean { webClientCustomizer(ref()) }
     bean { routes(ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
+    bean { ref<WebClient.Builder>().build() }
     bean("computeEventStatus") { computeEventStatus }
     bean("removeDueDate") { RemoveDueDate(ref()) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
@@ -36,14 +37,14 @@ fun routes(
     runtimeService: RuntimeService,
     props: AppProperties,
     whiteListIP: WhitelistIPFilterFunction,
-    builder: WebClient.Builder
+    client: WebClient
 ) = router {
     val trigger = TriggerHandler(runtimeService)
     POST("/trigger", trigger::post)
     HEAD("/trigger", trigger::head)
 }.and(
     router {
-        val register = RegisterHandler(props, builder)
+        val register = RegisterHandler(props, client)
         POST("/register", register::post)
     }.filter(whiteListIP)
 )

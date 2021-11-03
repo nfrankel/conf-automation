@@ -7,11 +7,10 @@ import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
 import reactor.util.Loggers
 
-class RegisterHandler(props: AppProperties, builder: WebClient.Builder) {
+class RegisterHandler(props: AppProperties, private val client: WebClient) {
 
     private val trello = props.trello
     private val logger = Loggers.getLogger(this::class.java)
-    private val client = builder.build()
 
     fun post(request: ServerRequest): ServerResponse {
         logger.info("Received registration request from ${request.remoteAddress()}")

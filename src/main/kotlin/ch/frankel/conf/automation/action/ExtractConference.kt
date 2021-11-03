@@ -8,10 +8,8 @@ import reactor.core.publisher.Mono
 
 class ExtractConference(
     private val fieldsInitializer: CustomFieldsInitializer,
-    builder: WebClient.Builder
+    private val client: WebClient
 ) : JavaDelegate {
-
-    private val client = builder.build()
 
     companion object {
         const val BPMN_CONFERENCE = "conference"

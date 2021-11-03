@@ -4,6 +4,7 @@ import ch.frankel.conf.automation.action.*
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
 import org.springframework.web.reactive.function.client.WebClient
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.function.router
 
 @SpringBootApplication
 @EnableProcessApplication
+@ConfigurationPropertiesScan
 class ConfAutomationApplication
 
 fun beans() = beans {

@@ -2,10 +2,8 @@ package ch.frankel.conf.automation
 
 import camundajar.impl.com.google.gson.Gson
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.stereotype.Component
 
 @ConfigurationProperties("application")
-@Component
 class AppProperties {
     lateinit var speaker: String
     lateinit var name: String

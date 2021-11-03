@@ -6,14 +6,12 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
+internal const val BPMN_CONFERENCE = "conference"
+
 class ExtractConference(
     private val fieldsInitializer: CustomFieldsInitializer,
     private val client: WebClient
 ) : JavaDelegate {
-
-    companion object {
-        const val BPMN_CONFERENCE = "conference"
-    }
 
     override fun execute(execution: DelegateExecution) {
         val fields = execution.customFields.collectList().block() ?: emptyList()

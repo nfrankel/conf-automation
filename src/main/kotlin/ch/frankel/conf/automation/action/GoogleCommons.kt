@@ -2,7 +2,6 @@ package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.AppProperties
 import ch.frankel.conf.automation.GoogleProperties
-import ch.frankel.conf.automation.action.ExtractConference.Companion.BPMN_CONFERENCE
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes

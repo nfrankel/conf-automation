@@ -10,8 +10,5 @@ application:
 spring:
   devtools:
     add-properties: false
-  h2:
-    console:
-      enabled: false
 server:
   forward-headers-strategy: framework

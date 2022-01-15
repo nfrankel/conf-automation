@@ -59,6 +59,7 @@ private fun LocalDate.toDateTime(): DateTime {
 
 @Suppress("unused")
 internal enum class Color(val id: String) {
+    Default("0"),
     Blue("1"),
     Green("2"),
     Purple("3"),

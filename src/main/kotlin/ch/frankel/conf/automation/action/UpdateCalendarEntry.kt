@@ -11,7 +11,7 @@ class UpdateCalendarEntry(props: AppProperties) : JavaDelegate {
 
     override fun execute(execution: DelegateExecution) {
         findCalendarEntry(client, google, execution.conference)?.let {
-            it.colorId = Color.Purple.id
+            it.colorId = Color.Default.id
             it.transparency = Availability.Busy.value
             client.events()
                 .update(google.calendarId, it.id, it).execute()

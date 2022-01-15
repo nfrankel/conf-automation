@@ -24,9 +24,9 @@ fun beans() = beans {
     bean("removeDueDate") { RemoveDueDate(ref()) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref()) }
-    bean("addSheetRow") { AddSheetRow(ref()) }
+    bean("addSheetRow") { NoOp }
     bean("removeCalendarEntry") { RemoveCalendarEntry(ref()) }
-    bean("updateSheetRow") { UpdateSheetRow(ref()) }
+    bean("updateSheetRow") { NoOp }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref()) }
     profile("production") {
         bean { WhitelistIPFilterFunction(ref()) }

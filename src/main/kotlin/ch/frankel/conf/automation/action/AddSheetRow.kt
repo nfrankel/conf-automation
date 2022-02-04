@@ -54,10 +54,10 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
     private enum class Column(val col: String) {
         CONFERENCE("A"),
         SPEAKER("B"),
-        LOCATION_COUNTRY("E"),
-        START_DATE("H"),
-        END_DATE("I"),
-        STATUS("O")
+        LOCATION_COUNTRY("D"),
+        START_DATE("E"),
+        END_DATE("F"),
+        STATUS("H")
     }
 }
 

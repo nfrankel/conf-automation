@@ -30,7 +30,6 @@ data class FeishuProperties(
 
 data class GoogleProperties(
     val json: String,
-    val sheetId: String,
     val calendarId: String
 ) {
     val clientEmail: String by lazy {

@@ -1,6 +1,7 @@
 package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.AppProperties
+import ch.frankel.conf.automation.Status
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.web.reactive.function.BodyInserters
@@ -15,34 +16,45 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
                 .uri("/sheets/v2/spreadsheets/${props.feishu.sheetId}/values_append")
                 .headers { headers -> headers.setBearerAuth(it) }
                 .body(
-                    BodyInserters.fromValue(execution.conference.toFeishuSheetData)
+                    BodyInserters.fromValue(execution.conference.valuesAppendPayload)
                 ).retrieve()
                 .bodyToMono<String>()
                 .block()
         }
     }
 
-    private val Conference.toFeishuSheetData: String
-        get() = """
-        {
-            "valueRange": {
-                "range": "${props.feishu.tabId}",
-                "values": [[
-                    {
-                        "text": "$name",
-                        "link": "$website",
-                        "type": "url"
-                    },
-                    "${props.speaker}",
-                    "",
-                    "$location",
-                    "${startDate.formatted}",
-                    "${endDate.formatted}",
-                    "Yes",
-                    "Submitted"
-                ]]
-            }
-        }
-        """.trimIndent()
+    private val Conference.valuesAppendPayload: ValuesAppendPayload
+        get() = ValuesAppendPayload(
+            ValueRange(
+                props.feishu.tabId,
+                arrayOf(
+                    arrayOf(
+                        Hyperlink(name, website),
+                        props.speaker,
+                        "",
+                        location,
+                        startDate.formatted,
+                        endDate.formatted,
+                        "Yes",
+                        Status.Submitted.toString()
+                    )
+                )
+            )
+        )
+
+    private data class ValuesAppendPayload(
+        val valueRange: ValueRange
+    )
+
+    private data class ValueRange(
+        val range: String,
+        val values: Array<Array<Any>>
+    )
+
+    private data class Hyperlink(
+        val text: String,
+        val link: String,
+        val url: String = "url"
+    )
 }
 

@@ -1,6 +1,7 @@
 package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.*
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.web.reactive.function.BodyInserters
@@ -36,15 +37,20 @@ class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
 
     private data class SearchPayload(val find: String, private val range: String) {
         @Suppress("unused")
-        val find_condition = FindCondition(range)
+        @JsonProperty("find_condition")
+        val findCondition = FindCondition(range)
     }
 
     private data class FindCondition(
         val range: String,
-        val match_case: Boolean = true,
-        val match_entire_cell: Boolean = true,
-        val search_by_regex: Boolean = false,
-        val include_formulas: Boolean = false
+        @JsonProperty("match_case")
+        val matchCase: Boolean = true,
+        @JsonProperty("match_entire_cell")
+        val matchEntireCell: Boolean = true,
+        @JsonProperty("search_by_regex")
+        val searchByRegex: Boolean = false,
+        @JsonProperty("include_formulas")
+        val includeFormulas: Boolean = false
     )
 
     private data class FindResponse(
@@ -53,21 +59,25 @@ class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
     ) {
         val range: String
             get() {
-                with(data.find_result) {
-                    if (rows_count == 0) throw IllegalStateException("Found no conference with name")
-                    else return "${matched_cells[0]}:${matched_cells[rows_count - 1]}".replace('A', 'H')
+                with(data.findResult) {
+                    if (rowsCount == 0) throw IllegalStateException("Found no conference with name")
+                    else return "${matchedCells[0]}:${matchedCells[rowsCount - 1]}".replace('A', 'H')
                 }
             }
     }
 
     private data class FindData(
-        val find_result: FindResult
+        @JsonProperty("find_result")
+        val findResult: FindResult
     )
 
     private data class FindResult(
-        val matched_cells: Array<String>,
-        val matched_formula_cells: Array<String>,
-        val rows_count: Int
+        @JsonProperty("matched_cells")
+        val matchedCells: Array<String>,
+        @JsonProperty("matched_formula_cells")
+        val matchedFormulaCells: Array<String>,
+        @JsonProperty("rows_count")
+        val rowsCount: Int
     )
 
     private data class UpdatePayload(

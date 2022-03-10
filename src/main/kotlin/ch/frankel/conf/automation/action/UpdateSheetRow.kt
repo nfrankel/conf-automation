@@ -1,40 +1,87 @@
 package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.*
-import com.google.api.services.sheets.v4.model.ValueRange
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.bodyToMono
 
 class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
 
     override fun execute(execution: DelegateExecution) {
-        val client = props.sheetsClient
-        val formattedStartDate = execution.conference.startDate.formatted
-        val formattedEndDate = execution.conference.endDate.formatted
-        val status =
-            if (execution.status == Status.Rejected ||
-                execution.status == Status.Accepted) execution.status.toString()
-            else throw IllegalStateException("Unknown event status")
-        client.Spreadsheets().values()
-            .get(props.google.sheetId, "A:I")
-            .execute()
-            .getValues()
-            .mapIndexed { index, it -> index to it }
-            .filter {
-                val data = it.second
-                data.size > 7
-                    && (data[0] as String) == execution.conference.name
-                    && (data[7] as String) == formattedStartDate
-                    && (data[8] as String) == formattedEndDate
-            }.forEach {
-                val value = ValueRange().setValues(listOf(listOf(status)))
-                val index = it.first + 1
-                client.Spreadsheets().values()
-                    .update(props.google.sheetId, "O$index:O$index", value)
-                    .setValueInputOption("USER_ENTERED")
-                    .execute()
+        props.bearerToken()?.let { token ->
+            val conference = execution.conference
+            val search = SearchPayload(conference.name, "${props.feishu.tabId}!A3:A399")
+            feishuClient
+                .post()
+                .uri("/sheets/v3/spreadsheets/${props.feishu.sheetId}/sheets/${props.feishu.tabId}/find")
+                .headers { headers -> headers.setBearerAuth(token) }
+                .body(
+                    BodyInserters.fromValue(search)
+                ).retrieve()
+                .bodyToMono<FindResponse>()
+                .flatMap {
+                    val update = UpdatePayload("${props.feishu.tabId}!${it.range}", execution.status.toString())
+                    feishuClient
+                        .put()
+                        .uri("/sheets/v2/spreadsheets/${props.feishu.sheetId}/values")
+                        .headers { headers -> headers.setBearerAuth(token) }
+                        .body(
+                            BodyInserters.fromValue(update)
+                        ).retrieve()
+                        .bodyToMono<String>()
+                }.block()
+        }
+    }
+
+    private data class SearchPayload(val find: String, private val range: String) {
+        @Suppress("unused")
+        val find_condition = FindCondition(range)
+    }
+
+    private data class FindCondition(
+        val range: String,
+        val match_case: Boolean = true,
+        val match_entire_cell: Boolean = true,
+        val search_by_regex: Boolean = false,
+        val include_formulas: Boolean = false
+    )
+
+    private data class FindResponse(
+        val code: Int,
+        val data: FindData
+    ) {
+        val range: String
+            get() {
+                with(data.find_result) {
+                    if (rows_count == 0) throw IllegalStateException("Found no conference with name")
+                    else return "${matched_cells[0]}:${matched_cells[rows_count - 1]}".replace('A', 'H')
+                }
             }
     }
+
+    private data class FindData(
+        val find_result: FindResult
+    )
+
+    private data class FindResult(
+        val matched_cells: Array<String>,
+        val matched_formula_cells: Array<String>,
+        val rows_count: Int
+    )
+
+    private data class UpdatePayload(
+        private val range: String,
+        private val value: String
+    ) {
+        @Suppress("unused")
+        val valueRange: Update = Update(range, arrayOf(arrayOf(value)))
+    }
+
+    private data class Update(
+        val range: String,
+        val values: Array<Array<String>>
+    )
 
     private val DelegateExecution.status: Status
         get() = getVariable(BPMN_STATUS) as Status

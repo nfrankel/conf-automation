@@ -5,8 +5,6 @@ import ch.frankel.conf.automation.GoogleProperties
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
-import com.google.api.services.sheets.v4.Sheets
-import com.google.api.services.sheets.v4.SheetsScopes
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
 import org.camunda.bpm.engine.delegate.DelegateExecution
@@ -22,13 +20,7 @@ internal val LocalDate.formatted: String
 
 internal val AppProperties.credential: GoogleCredentials
     get() = GoogleCredentials.fromStream(google.json.byteInputStream())
-        .createScoped(CalendarScopes.CALENDAR, SheetsScopes.SPREADSHEETS)
-
-internal val AppProperties.sheetsClient: Sheets
-    get() = Sheets
-        .Builder(TRANSPORT, JSON_FACTORY, HttpCredentialsAdapter(credential))
-        .setApplicationName(name)
-        .build()
+        .createScoped(CalendarScopes.CALENDAR)
 
 internal val AppProperties.calendarClient: Calendar
     get() = Calendar
@@ -49,7 +41,7 @@ internal fun findCalendarEntry(
         .items
         .find {
             it.summary == "${conference.name} (${conference.location})"
-                && it.creator.email == google.clientEmail
+                    && it.creator.email == google.clientEmail
         }
 
 private fun LocalDate.toDateTime(): DateTime {

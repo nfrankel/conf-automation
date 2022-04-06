@@ -9,7 +9,7 @@ const val BPMN_STATUS = "status"
 enum class Status {
     Submitted,
     Accepted,
-    Rejected,
+    Refused,
     Abandoned,
     Irrelevant
 }
@@ -26,7 +26,7 @@ internal val computeEventStatus = JavaDelegate {
 private val eventStatusMatrix = mapOf(
     ("Backlog" to "Submitted") to Status.Submitted,
     ("Submitted" to "Accepted") to Status.Accepted,
-    ("Submitted" to "Refused") to Status.Rejected,
+    ("Submitted" to "Refused") to Status.Refused,
     ("Backlog" to "Abandoned") to Status.Abandoned
 )
 

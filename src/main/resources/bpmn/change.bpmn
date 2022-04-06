@@ -110,8 +110,8 @@
         <bpmn:outgoing>SequenceFlow_12s675l</bpmn:outgoing>
       </bpmn:serviceTask>
     </bpmn:subProcess>
-    <bpmn:sequenceFlow id="SequenceFlow_0369dmx" name="Rejected" sourceRef="Task_0lxk87u" targetRef="SubProcess_1e4yx45">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Rejected'}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="SequenceFlow_0369dmx" name="Refused" sourceRef="Task_0lxk87u" targetRef="SubProcess_1e4yx45">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Refused'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:subProcess id="SubProcess_04kl8j1">
       <bpmn:incoming>SequenceFlow_0vrlf4i</bpmn:incoming>

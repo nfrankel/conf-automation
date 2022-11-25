@@ -54,7 +54,7 @@ class AddSheetRow(private val props: AppProperties) : JavaDelegate {
     private data class Hyperlink(
         val text: String,
         val link: String,
-        val url: String = "url"
+        val type: String = "url"
     )
 }
 

@@ -25,7 +25,8 @@ data class FeishuProperties(
     val sheetId: String,
     val tabId: String,
     val appId: String,
-    val appSecret: String
+    val appSecret: String,
+    val maxRow: Int
 )
 
 data class GoogleProperties(

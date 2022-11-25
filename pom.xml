@@ -12,7 +12,7 @@
     </parent>
     <groupId>ch.frankel.conftools</groupId>
     <artifactId>conf-automation</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
     <properties>
         <java.version>11</java.version>
         <kotlin.version>1.7.10</kotlin.version>
@@ -111,7 +111,7 @@
                         <image>adoptopenjdk/openjdk11:alpine-jre</image>
                     </from>
                     <to>
-                        <image>${project.artifactId}:${project.version}</image>
+                        <image>rg.fr-par.scw.cloud/funcscwdefaultzuueairq/confautomation:${project.version}</image>
                     </to>
                 </configuration>
             </plugin>

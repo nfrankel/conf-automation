@@ -6,6 +6,7 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.util.Loggers
 
 class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
 
@@ -55,16 +56,32 @@ class UpdateSheetRow(private val props: AppProperties) : JavaDelegate {
 
     private data class FindResponse(
         val code: Int,
-        val data: FindData
+        val msg: String,
+        val data: FindData?,
+        val error: FindError?
     ) {
         val range: String
             get() {
-                with(data.findResult) {
-                    if (rowsCount == 0) throw IllegalStateException("Found no conference with name")
-                    else return "${matchedCells[0]}:${matchedCells[rowsCount - 1]}".replace('A', 'H')
+                val logger = Loggers.getLogger(this::class.java)
+                if (data != null) {
+                    with(data.findResult) {
+                        if (rowsCount == 0) throw IllegalStateException("Found no conference with name")
+                        else return "${matchedCells[0]}:${matchedCells[rowsCount - 1]}".replace('A', 'H')
+                    }
+                } else if (error != null) {
+                    logger.error("Response returned an error: $error")
+                    throw IllegalStateException(msg)
                 }
+                logger.error("Impossible state: $msg")
+                throw IllegalStateException(msg)
             }
     }
+
+    private data class FindError(
+        val subcode: Long,
+        @JsonProperty("log_id")
+        val logId: String
+    )
 
     private data class FindData(
         @JsonProperty("find_result")

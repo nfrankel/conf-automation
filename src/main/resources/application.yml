@@ -2,7 +2,6 @@ application:
   speaker: Nicolas Fränkel
   name: Conference workflow automation
 spring:
-  application:
-    name: ${application.name}
-  datasource:
-    driver-class-name: org.postgresql.Driver
+  application.name: ${application.name}
+  datasource.driver-class-name: org.postgresql.Driver
+logging.level.reactor.netty.http.client: DEBUG

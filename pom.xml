@@ -102,6 +102,19 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <from>
+                        <image>adoptopenjdk/openjdk11:alpine-jre</image>
+                    </from>
+                    <to>
+                        <image>${project.artifactId}:${project.version}</image>
+                    </to>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

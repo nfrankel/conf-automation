@@ -1,6 +1,9 @@
 package ch.frankel.conf.automation
 
 import ch.frankel.conf.automation.action.*
+import ch.frankel.conf.automation.feishu.FeishuAddSheetRow
+import ch.frankel.conf.automation.feishu.FeishuClient
+import ch.frankel.conf.automation.feishu.FeishuUpdateSheetRow
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -20,13 +23,14 @@ fun beans() = beans {
     bean { routes(ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
     bean { ref<WebClient.Builder>().build() }
+    bean { FeishuClient(ref()) }
     bean("computeEventStatus") { computeEventStatus }
     bean("removeDueDate") { RemoveDueDate(ref()) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref()) }
-    bean("addSheetRow") { AddSheetRow(ref()) }
+    bean("addSheetRow") { AddSheetRow(FeishuAddSheetRow(ref(), ref())) }
     bean("removeCalendarEntry") { RemoveCalendarEntry(ref()) }
-    bean("updateSheetRow") { UpdateSheetRow(ref()) }
+    bean("updateSheetRow") { UpdateSheetRow(FeishuUpdateSheetRow(ref(), ref())) }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref()) }
     profile("production") {
         bean { WhitelistIPFilterFunction(ref()) }

@@ -1,27 +1,13 @@
 package ch.frankel.conf.automation.action
 
+import ch.frankel.conf.automation.trello.TrelloRemoveDueDate
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
-import org.springframework.web.reactive.function.BodyInserters
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.util.Loggers
 
-class RemoveDueDate(private val client: WebClient) : JavaDelegate {
-
-    private val logger = Loggers.getLogger(this::class.java)
-
+class RemoveDueDate(private val removeDueDate: TrelloRemoveDueDate) : JavaDelegate {
     override fun execute(execution: DelegateExecution) {
-        logger.debug("[${execution.processInstanceId}] Start action of removing due date")
-        val request = mapOf(
-            "id" to execution.event.cardId,
-            "value" to null
-        )
-        client.put()
-            .uri("/cards/${execution.event.cardId}/due?key={key}&token={token}")
-            .body(BodyInserters.fromValue(request))
-            .retrieve()
-            .toBodilessEntity()
-            .block()
-        logger.debug("[${execution.processInstanceId}] Request to remove due date has been sent")
+        val processInstanceId = execution.processInstanceId
+        val cardId = execution.trelloEvent.cardId
+        removeDueDate.execute(processInstanceId, cardId)
     }
 }

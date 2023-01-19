@@ -1,5 +1,6 @@
 package ch.frankel.conf.automation.action
 
+import ch.frankel.conf.automation.CustomFieldsInitializer
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.web.reactive.function.client.WebClient
@@ -15,13 +16,13 @@ class ExtractConference(
 
     override fun execute(execution: DelegateExecution) {
         val fields = execution.customFields.collectList().block() ?: emptyList()
-        val name = execution.event.action.data.card.name
+        val name = execution.trelloEvent.action.data.card.name
         execution.setVariable(BPMN_CONFERENCE, Conference(name, fields))
     }
 
     private val DelegateExecution.customFields: Flux<Field<out Any>>
         get() = client.get()
-            .uri("/cards/${event.cardId}/customFieldItems?key={key}&token={token}")
+            .uri("/cards/${trelloEvent.cardId}/customFieldItems?key={key}&token={token}")
             .retrieve()
             .bodyToFlux(CustomFieldItem::class.java)
             .flatMap { getField(it) }

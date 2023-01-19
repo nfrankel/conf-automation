@@ -1,7 +1,11 @@
-package ch.frankel.conf.automation.action
+package ch.frankel.conf.automation.google
 
 import ch.frankel.conf.automation.AppProperties
+import ch.frankel.conf.automation.action.BPMN_CONFERENCE
 import ch.frankel.conf.automation.GoogleProperties
+import ch.frankel.conf.automation.action.Conference
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
+import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
@@ -11,6 +15,9 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+
+internal val TRANSPORT = GoogleNetHttpTransport.newTrustedTransport()
+internal val JSON_FACTORY = GsonFactory.getDefaultInstance()
 
 internal val DelegateExecution.conference: Conference
     get() = getVariable(BPMN_CONFERENCE) as Conference

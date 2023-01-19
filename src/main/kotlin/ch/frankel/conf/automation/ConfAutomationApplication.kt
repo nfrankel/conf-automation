@@ -4,6 +4,14 @@ import ch.frankel.conf.automation.action.*
 import ch.frankel.conf.automation.feishu.FeishuAddSheetRow
 import ch.frankel.conf.automation.feishu.FeishuClient
 import ch.frankel.conf.automation.feishu.FeishuUpdateSheetRow
+import ch.frankel.conf.automation.google.calendar.AddCalendarEntry
+import ch.frankel.conf.automation.google.calendar.RemoveCalendarEntry
+import ch.frankel.conf.automation.google.calendar.UpdateCalendarEntry
+import ch.frankel.conf.automation.trello.ConfAutomationWebClientCustomizer
+import ch.frankel.conf.automation.trello.TrelloRemoveDueDate
+import ch.frankel.conf.automation.web.RegisterHandler
+import ch.frankel.conf.automation.web.TriggerHandler
+import ch.frankel.conf.automation.web.WhitelistIPFilterFunction
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -19,13 +27,13 @@ import org.springframework.web.servlet.function.router
 class ConfAutomationApplication
 
 fun beans() = beans {
-    bean { webClientCustomizer(ref()) }
+    bean { ConfAutomationWebClientCustomizer(ref()) }
     bean { routes(ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
     bean { ref<WebClient.Builder>().build() }
     bean { FeishuClient(ref()) }
-    bean("computeEventStatus") { computeEventStatus }
-    bean("removeDueDate") { RemoveDueDate(ref()) }
+    bean("computeEventStatus") { ComputeEventStatus() }
+    bean("removeDueDate") { RemoveDueDate(TrelloRemoveDueDate(ref())) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref()) }
     bean("addSheetRow") { AddSheetRow(FeishuAddSheetRow(ref(), ref())) }

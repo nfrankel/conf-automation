@@ -1,5 +1,6 @@
-package ch.frankel.conf.automation
+package ch.frankel.conf.automation.web
 
+import ch.frankel.conf.automation.AppProperties
 import inet.ipaddr.IPAddress
 import inet.ipaddr.IPAddressString
 import org.springframework.http.HttpStatus.FORBIDDEN
@@ -10,7 +11,7 @@ import reactor.util.Loggers
 class WhitelistIPFilterFunction(props: AppProperties) : HandlerFilterFunction<ServerResponse, ServerResponse> {
 
     private val logger = Loggers.getLogger(this::class.java)
-    private val ips: kotlin.collections.List<IPAddress> by lazy {
+    private val ips: List<IPAddress> by lazy {
         props.trello.ips.map { IPAddressString(it).address }
     }
 

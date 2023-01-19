@@ -1,6 +1,5 @@
-package ch.frankel.conf.automation.action
+package ch.frankel.conf.automation
 
-import ch.frankel.conf.automation.AppProperties
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 

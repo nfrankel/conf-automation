@@ -1,6 +1,7 @@
-package ch.frankel.conf.automation
+package ch.frankel.conf.automation.web
 
 import camundajar.impl.com.google.gson.Gson
+import ch.frankel.conf.automation.AppProperties
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.servlet.function.ServerRequest

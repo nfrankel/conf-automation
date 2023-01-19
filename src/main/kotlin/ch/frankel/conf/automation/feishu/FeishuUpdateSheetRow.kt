@@ -1,7 +1,6 @@
 package ch.frankel.conf.automation.feishu
 
 import ch.frankel.conf.automation.AppProperties
-import ch.frankel.conf.automation.Status
 import ch.frankel.conf.automation.action.Conference
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.web.reactive.function.BodyInserters
@@ -11,7 +10,7 @@ import reactor.util.Loggers
 
 class FeishuUpdateSheetRow(private val props: AppProperties, private val client: FeishuClient) {
 
-    fun execute(conference: Conference, status: Status) {
+    fun execute(conference: Conference, status: String) {
         client.getBearerToken()
             .flatMap { bearer ->
                 val search = SearchPayload(conference.name, "${props.feishu.tabId}!A3:A${props.feishu.maxRow}")
@@ -24,7 +23,7 @@ class FeishuUpdateSheetRow(private val props: AppProperties, private val client:
             }.flatMap {
                 val response = it.t1
                 val bearer = it.t2
-                val update = UpdatePayload("${props.feishu.tabId}!${response.range}", status.toString())
+                val update = UpdatePayload("${props.feishu.tabId}!${response.range}", status)
                 client.put()
                     .uri("/sheets/v2/spreadsheets/${props.feishu.sheetId}/values")
                     .headers { headers -> headers.setBearerAuth(bearer.token) }

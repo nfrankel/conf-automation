@@ -1,5 +1,6 @@
-package ch.frankel.conf.automation
+package ch.frankel.conf.automation.web
 
+import ch.frankel.conf.automation.TrelloEvent
 import org.camunda.bpm.engine.RuntimeService
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
@@ -7,13 +8,9 @@ import org.springframework.web.servlet.function.ServerResponse
 
 class TriggerHandler(private val runtimeService: RuntimeService) {
 
-    companion object {
-        const val BPMN_EVENT = "event"
-    }
-
     fun post(request: ServerRequest): ServerResponse {
         val event = request.body(TrelloEvent::class.java)
-        val params = mapOf(BPMN_EVENT to event)
+        val params = mapOf("event" to event)
         val id = runtimeService
             .startProcessInstanceByKey("HandleChange", params)
             .processDefinitionId

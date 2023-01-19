@@ -1,9 +1,9 @@
 package ch.frankel.conf.automation.feishu
 
 import ch.frankel.conf.automation.AppProperties
-import ch.frankel.conf.automation.Status
+import ch.frankel.conf.automation.action.Status
 import ch.frankel.conf.automation.action.Conference
-import ch.frankel.conf.automation.action.formatted
+import ch.frankel.conf.automation.google.formatted
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.bodyToMono
 

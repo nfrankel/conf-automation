@@ -30,8 +30,12 @@ data class FeishuProperties(
 )
 
 data class GoogleProperties(
-    val json: String,
+    val calendar: Calendar,
     val calendarId: String
+)
+
+data class Calendar(
+    val json: String,
 ) {
     val clientEmail: String by lazy {
         Gson().fromJson(json, Map::class.java)["client_email"] as String

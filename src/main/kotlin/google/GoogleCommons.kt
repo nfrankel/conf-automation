@@ -25,13 +25,13 @@ internal val DelegateExecution.conference: Conference
 internal val LocalDate.formatted: String
     get() = DateTimeFormatter.ISO_LOCAL_DATE.format(this)
 
-internal val AppProperties.credential: GoogleCredentials
-    get() = GoogleCredentials.fromStream(google.json.byteInputStream())
+internal val AppProperties.calendarCredentials: GoogleCredentials
+    get() = GoogleCredentials.fromStream(google.calendar.json.byteInputStream())
         .createScoped(CalendarScopes.CALENDAR)
 
 internal val AppProperties.calendarClient: Calendar
     get() = Calendar
-        .Builder(TRANSPORT, JSON_FACTORY, HttpCredentialsAdapter(credential))
+        .Builder(TRANSPORT, JSON_FACTORY, HttpCredentialsAdapter(calendarCredentials))
         .setApplicationName(name)
         .build()
 
@@ -39,8 +39,7 @@ internal fun findCalendarEntry(
     client: Calendar,
     google: GoogleProperties,
     conference: Conference
-) =
-    client.events()
+) = client.events()
         .list(google.calendarId)
         .setTimeMin(conference.startDate.minusDays(1).toDateTime())
         .setTimeMax(conference.endDate.plusDays(1).toDateTime())
@@ -48,7 +47,7 @@ internal fun findCalendarEntry(
         .items
         .find {
             it.summary == "${conference.name} (${conference.location})"
-                    && it.creator.email == google.clientEmail
+                    && it.creator.email == google.calendar.clientEmail
         }
 
 private fun LocalDate.toDateTime(): DateTime {

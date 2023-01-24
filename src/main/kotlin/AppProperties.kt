@@ -31,6 +31,7 @@ data class FeishuProperties(
 
 data class GoogleProperties(
     val calendar: CalendarProperties,
+    val sheets: SheetsProperties,
 )
 
 data class CalendarProperties(
@@ -41,3 +42,8 @@ data class CalendarProperties(
         Gson().fromJson(json, Map::class.java)["client_email"] as String
     }
 }
+
+data class SheetsProperties(
+    val id: String,
+    val json: String
+)

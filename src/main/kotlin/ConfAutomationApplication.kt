@@ -8,6 +8,8 @@ import ch.frankel.conf.automation.google.calendar.AddCalendarEntry
 import ch.frankel.conf.automation.google.calendar.CalendarFactory
 import ch.frankel.conf.automation.google.calendar.RemoveCalendarEntry
 import ch.frankel.conf.automation.google.calendar.UpdateCalendarEntry
+import ch.frankel.conf.automation.google.sheets.GoogleAddSheetRow
+import ch.frankel.conf.automation.google.sheets.SheetsFactory
 import ch.frankel.conf.automation.trello.ConfAutomationWebClientCustomizer
 import ch.frankel.conf.automation.trello.TrelloRemoveDueDate
 import ch.frankel.conf.automation.web.RegisterHandler
@@ -33,12 +35,17 @@ fun beans() = beans {
     bean { CustomFieldsInitializer(ref(), ref()) }
     bean { ref<WebClient.Builder>().build() }
     bean { FeishuClient(ref()) }
+    bean { SheetsFactory(ref()).createInstance() }
     bean { CalendarFactory(ref()).createInstance() }
     bean("computeEventStatus") { ComputeEventStatus() }
     bean("removeDueDate") { RemoveDueDate(TrelloRemoveDueDate(ref())) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
-    bean("addSheetRow") { AddSheetRow(FeishuAddSheetRow(ref(), ref())) }
+    bean("addSheetRow") {
+        val props = ref<AppProperties>()
+        val googleAddSheetRow = GoogleAddSheetRow(ref(), props.google.sheets, props.speaker)
+        AddSheetRow(FeishuAddSheetRow(ref(), ref()), googleAddSheetRow)
+    }
     bean("removeCalendarEntry") { RemoveCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
     bean("updateSheetRow") { UpdateSheetRow(FeishuUpdateSheetRow(ref(), ref())) }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref(),  ref<AppProperties>().google.calendar) }

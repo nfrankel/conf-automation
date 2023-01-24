@@ -12,7 +12,7 @@ class RemoveCalendarEntry(props: AppProperties) : JavaDelegate {
 
     override fun execute(execution: DelegateExecution) {
         findCalendarEntry(client, google, execution.conference)?.let {
-            client.events().delete(google.calendarId, it.id).execute()
+            client.events().delete(google.calendar.id, it.id).execute()
         }
     }
 }

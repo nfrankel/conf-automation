@@ -31,7 +31,7 @@ internal fun findCalendarEntry(
     google: GoogleProperties,
     conference: Conference
 ) = client.events()
-    .list(google.calendarId)
+    .list(google.calendar.id)
     .setTimeMin(conference.startDate.minusDays(1).toDateTime())
     .setTimeMax(conference.endDate.plusDays(1).toDateTime())
     .execute()

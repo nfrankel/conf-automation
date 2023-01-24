@@ -31,10 +31,10 @@ data class FeishuProperties(
 
 data class GoogleProperties(
     val calendar: Calendar,
-    val calendarId: String
 )
 
 data class Calendar(
+    val id: String,
     val json: String,
 ) {
     val clientEmail: String by lazy {

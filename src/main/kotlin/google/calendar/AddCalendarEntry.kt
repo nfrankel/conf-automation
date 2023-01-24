@@ -21,7 +21,7 @@ class AddCalendarEntry(props: AppProperties) : JavaDelegate {
         val entry = findCalendarEntry(client, google, execution.conference)
         if (entry == null) {
             val event = execution.conference.toCalendarEvent()
-            client.events().insert(google.calendarId, event).execute()
+            client.events().insert(google.calendar.id, event).execute()
         }
     }
 

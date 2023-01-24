@@ -15,7 +15,7 @@ class UpdateCalendarEntry(props: AppProperties) : JavaDelegate {
             it.colorId = Color.Default.id
             it.transparency = Availability.Busy.value
             client.events()
-                .update(google.calendarId, it.id, it).execute()
+                .update(google.calendar.id, it.id, it).execute()
         }
     }
 }

@@ -1,7 +1,7 @@
 package ch.frankel.conf.automation.action
 
 import ch.frankel.conf.automation.feishu.FeishuAddSheetRow
-import ch.frankel.conf.automation.google.conference
+import ch.frankel.conf.automation.conference
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 

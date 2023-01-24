@@ -2,11 +2,7 @@ package ch.frankel.conf.automation.google.calendar
 
 import ch.frankel.conf.automation.AppProperties
 import ch.frankel.conf.automation.action.*
-import ch.frankel.conf.automation.google.*
-import ch.frankel.conf.automation.google.Availability
-import ch.frankel.conf.automation.google.Color
-import ch.frankel.conf.automation.google.conference
-import ch.frankel.conf.automation.google.findCalendarEntry
+import ch.frankel.conf.automation.conference
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.EventDateTime

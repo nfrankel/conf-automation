@@ -1,11 +1,12 @@
 package ch.frankel.conf.automation.feishu
 
 import ch.frankel.conf.automation.AppProperties
-import ch.frankel.conf.automation.action.Status
 import ch.frankel.conf.automation.action.Conference
-import ch.frankel.conf.automation.google.formatted
+import ch.frankel.conf.automation.action.Status
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.bodyToMono
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class FeishuAddSheetRow(private val props: AppProperties, private val client: FeishuClient) {
 
@@ -50,3 +51,8 @@ private data class Hyperlink(
     val link: String,
     val type: String = "url"
 )
+
+private val LocalDate.formatted: String
+    get() = DateTimeFormatter.ISO_LOCAL_DATE.format(this)
+
+

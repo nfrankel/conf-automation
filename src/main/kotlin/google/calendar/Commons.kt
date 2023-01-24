@@ -1,7 +1,6 @@
-package ch.frankel.conf.automation.google
+package ch.frankel.conf.automation.google.calendar
 
 import ch.frankel.conf.automation.AppProperties
-import ch.frankel.conf.automation.action.BPMN_CONFERENCE
 import ch.frankel.conf.automation.GoogleProperties
 import ch.frankel.conf.automation.action.Conference
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
@@ -11,19 +10,11 @@ import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
 import com.google.auth.http.HttpCredentialsAdapter
 import com.google.auth.oauth2.GoogleCredentials
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 internal val TRANSPORT = GoogleNetHttpTransport.newTrustedTransport()
 internal val JSON_FACTORY = GsonFactory.getDefaultInstance()
-
-internal val DelegateExecution.conference: Conference
-    get() = getVariable(BPMN_CONFERENCE) as Conference
-
-internal val LocalDate.formatted: String
-    get() = DateTimeFormatter.ISO_LOCAL_DATE.format(this)
 
 internal val AppProperties.calendarCredentials: GoogleCredentials
     get() = GoogleCredentials.fromStream(google.calendar.json.byteInputStream())
@@ -40,15 +31,15 @@ internal fun findCalendarEntry(
     google: GoogleProperties,
     conference: Conference
 ) = client.events()
-        .list(google.calendarId)
-        .setTimeMin(conference.startDate.minusDays(1).toDateTime())
-        .setTimeMax(conference.endDate.plusDays(1).toDateTime())
-        .execute()
-        .items
-        .find {
-            it.summary == "${conference.name} (${conference.location})"
-                    && it.creator.email == google.calendar.clientEmail
-        }
+    .list(google.calendarId)
+    .setTimeMin(conference.startDate.minusDays(1).toDateTime())
+    .setTimeMax(conference.endDate.plusDays(1).toDateTime())
+    .execute()
+    .items
+    .find {
+        it.summary == "${conference.name} (${conference.location})"
+                && it.creator.email == google.calendar.clientEmail
+    }
 
 private fun LocalDate.toDateTime(): DateTime {
     val millis = atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()

@@ -9,6 +9,7 @@ import ch.frankel.conf.automation.google.calendar.CalendarFactory
 import ch.frankel.conf.automation.google.calendar.RemoveCalendarEntry
 import ch.frankel.conf.automation.google.calendar.UpdateCalendarEntry
 import ch.frankel.conf.automation.google.sheets.GoogleAddSheetRow
+import ch.frankel.conf.automation.google.sheets.GoogleUpdateSheetRow
 import ch.frankel.conf.automation.google.sheets.SheetsFactory
 import ch.frankel.conf.automation.trello.ConfAutomationWebClientCustomizer
 import ch.frankel.conf.automation.trello.TrelloRemoveDueDate
@@ -47,7 +48,11 @@ fun beans() = beans {
         AddSheetRow(FeishuAddSheetRow(ref(), ref()), googleAddSheetRow)
     }
     bean("removeCalendarEntry") { RemoveCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
-    bean("updateSheetRow") { UpdateSheetRow(FeishuUpdateSheetRow(ref(), ref())) }
+    bean("updateSheetRow") {
+        val props = ref<AppProperties>()
+        val googleUpdateSheetRow = GoogleUpdateSheetRow(ref(), props.google.sheets, props.speaker)
+        UpdateSheetRow(FeishuUpdateSheetRow(ref(), ref()), googleUpdateSheetRow)
+    }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref(),  ref<AppProperties>().google.calendar) }
     profile("production") {
         bean { WhitelistIPFilterFunction(ref()) }

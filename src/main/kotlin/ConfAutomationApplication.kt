@@ -5,6 +5,7 @@ import ch.frankel.conf.automation.feishu.FeishuAddSheetRow
 import ch.frankel.conf.automation.feishu.FeishuClient
 import ch.frankel.conf.automation.feishu.FeishuUpdateSheetRow
 import ch.frankel.conf.automation.google.calendar.AddCalendarEntry
+import ch.frankel.conf.automation.google.calendar.CalendarFactory
 import ch.frankel.conf.automation.google.calendar.RemoveCalendarEntry
 import ch.frankel.conf.automation.google.calendar.UpdateCalendarEntry
 import ch.frankel.conf.automation.trello.ConfAutomationWebClientCustomizer
@@ -32,14 +33,15 @@ fun beans() = beans {
     bean { CustomFieldsInitializer(ref(), ref()) }
     bean { ref<WebClient.Builder>().build() }
     bean { FeishuClient(ref()) }
+    bean { CalendarFactory(ref()).createInstance() }
     bean("computeEventStatus") { ComputeEventStatus() }
     bean("removeDueDate") { RemoveDueDate(TrelloRemoveDueDate(ref())) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
-    bean("addCalendarEntry") { AddCalendarEntry(ref()) }
+    bean("addCalendarEntry") { AddCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
     bean("addSheetRow") { AddSheetRow(FeishuAddSheetRow(ref(), ref())) }
-    bean("removeCalendarEntry") { RemoveCalendarEntry(ref()) }
+    bean("removeCalendarEntry") { RemoveCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
     bean("updateSheetRow") { UpdateSheetRow(FeishuUpdateSheetRow(ref(), ref())) }
-    bean("updateCalendarEntry") { UpdateCalendarEntry(ref()) }
+    bean("updateCalendarEntry") { UpdateCalendarEntry(ref(),  ref<AppProperties>().google.calendar) }
     profile("production") {
         bean { WhitelistIPFilterFunction(ref()) }
     }

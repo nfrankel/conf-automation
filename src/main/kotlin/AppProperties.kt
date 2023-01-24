@@ -30,10 +30,10 @@ data class FeishuProperties(
 )
 
 data class GoogleProperties(
-    val calendar: Calendar,
+    val calendar: CalendarProperties,
 )
 
-data class Calendar(
+data class CalendarProperties(
     val id: String,
     val json: String,
 ) {

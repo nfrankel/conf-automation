@@ -1,13 +1,12 @@
 package ch.frankel.conf.automation.action
 
+import ch.frankel.conf.automation.BPMN_CONFERENCE
 import ch.frankel.conf.automation.CustomFieldsInitializer
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-
-internal const val BPMN_CONFERENCE = "conference"
 
 class ExtractConference(
     private val fieldsInitializer: CustomFieldsInitializer,

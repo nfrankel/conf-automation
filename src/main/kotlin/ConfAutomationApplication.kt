@@ -1,9 +1,6 @@
 package ch.frankel.conf.automation
 
 import ch.frankel.conf.automation.action.*
-import ch.frankel.conf.automation.feishu.FeishuAddSheetRow
-import ch.frankel.conf.automation.feishu.FeishuClient
-import ch.frankel.conf.automation.feishu.FeishuUpdateSheetRow
 import ch.frankel.conf.automation.google.calendar.AddCalendarEntry
 import ch.frankel.conf.automation.google.calendar.CalendarFactory
 import ch.frankel.conf.automation.google.calendar.RemoveCalendarEntry
@@ -35,7 +32,6 @@ fun beans() = beans {
     bean { routes(ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
     bean { ref<WebClient.Builder>().build() }
-    bean { FeishuClient(ref()) }
     bean { SheetsFactory(ref()).createInstance() }
     bean { CalendarFactory(ref()).createInstance() }
     bean("computeEventStatus") { ComputeEventStatus() }
@@ -45,13 +41,13 @@ fun beans() = beans {
     bean("addSheetRow") {
         val props = ref<AppProperties>()
         val googleAddSheetRow = GoogleAddSheetRow(ref(), props.google.sheets, props.speaker)
-        AddSheetRow(FeishuAddSheetRow(ref(), ref()), googleAddSheetRow)
+        AddSheetRow(googleAddSheetRow)
     }
     bean("removeCalendarEntry") { RemoveCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
     bean("updateSheetRow") {
         val props = ref<AppProperties>()
         val googleUpdateSheetRow = GoogleUpdateSheetRow(ref(), props.google.sheets, props.speaker)
-        UpdateSheetRow(FeishuUpdateSheetRow(ref(), ref()), googleUpdateSheetRow)
+        UpdateSheetRow(googleUpdateSheetRow)
     }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref(),  ref<AppProperties>().google.calendar) }
     profile("production") {

@@ -1,8 +1,6 @@
 application:
   speaker: Nicolas Fränkel
   name: Conference workflow automation
-  feishu:
-    max-row: 199
 spring:
   application.name: ${application.name}
   datasource.driver-class-name: org.postgresql.Driver

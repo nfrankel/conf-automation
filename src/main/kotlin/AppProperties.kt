@@ -9,8 +9,7 @@ data class AppProperties(
     val speaker: String,
     val name: String,
     val trello: TrelloProperties,
-    val google: GoogleProperties,
-    val feishu: FeishuProperties
+    val google: GoogleProperties
 )
 
 data class TrelloProperties(
@@ -19,14 +18,6 @@ data class TrelloProperties(
     val boardShortLink: String,
     val boardId: String,
     val ips: Set<String>
-)
-
-data class FeishuProperties(
-    val sheetId: String,
-    val tabId: String,
-    val appId: String,
-    val appSecret: String,
-    val maxRow: Int
 )
 
 data class GoogleProperties(

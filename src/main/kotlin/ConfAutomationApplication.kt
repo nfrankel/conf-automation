@@ -7,7 +7,7 @@ import ch.frankel.conf.automation.google.calendar.RemoveCalendarEntry
 import ch.frankel.conf.automation.google.calendar.UpdateCalendarEntry
 import ch.frankel.conf.automation.google.sheets.GoogleAddSheetRow
 import ch.frankel.conf.automation.google.sheets.GoogleUpdateSheetRow
-import ch.frankel.conf.automation.google.sheets.SheetsFactory
+import ch.frankel.conf.automation.google.sheets.SheetsClientFactory
 import ch.frankel.conf.automation.trello.ConfAutomationWebClientCustomizer
 import ch.frankel.conf.automation.trello.TrelloRemoveDueDate
 import ch.frankel.conf.automation.web.RegisterHandler
@@ -32,7 +32,7 @@ fun beans() = beans {
     bean { routes(ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
     bean { ref<WebClient.Builder>().build() }
-    bean { SheetsFactory(ref()).createInstance() }
+    bean { SheetsClientFactory(ref()).createInstance() }
     bean { CalendarFactory(ref()).createInstance() }
     bean("computeEventStatus") { ComputeEventStatus() }
     bean("removeDueDate") { RemoveDueDate(TrelloRemoveDueDate(ref())) }

@@ -4,8 +4,7 @@ import java.io.Serializable
 import java.time.LocalDate
 
 data class TrelloEvent(val action: Action) : Serializable {
-    val cardId: String
-        get() = this.action.data.card.id
+    val cardId = this.action.data.card.id
 }
 
 data class Action(

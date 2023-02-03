@@ -27,7 +27,7 @@ import org.springframework.web.servlet.function.router
 @ConfigurationPropertiesScan
 class ConfAutomationApplication
 
-fun beans() = beans {
+private fun beans() = beans {
     bean { ConfAutomationWebClientCustomizer(ref()) }
     bean { routes(ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
@@ -55,7 +55,7 @@ fun beans() = beans {
     }
 }
 
-fun routes(
+private fun routes(
     runtimeService: RuntimeService,
     props: AppProperties,
     whiteListIP: WhitelistIPFilterFunction,

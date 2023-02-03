@@ -12,15 +12,14 @@ import com.google.auth.oauth2.GoogleCredentials
 class SheetsClientFactory(val props: AppProperties) {
 
     fun createInstance(): Sheets {
-        val credentials = GoogleCredentials.fromStream(props.google.sheets.json.byteInputStream())
+        val credentials = GoogleCredentials
+            .fromStream(props.google.sheets.json.byteInputStream())
             .createScoped(SheetsScopes.SPREADSHEETS)
-        return Sheets
-            .Builder(
+        return Sheets.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 GsonFactory.getDefaultInstance(),
                 HttpCredentialsAdapter(credentials)
-            )
-            .setApplicationName(props.name)
+            ).setApplicationName(props.name)
             .build()
     }
 }

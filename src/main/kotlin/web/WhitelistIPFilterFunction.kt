@@ -1,19 +1,19 @@
 package ch.frankel.conf.automation.web
 
 import ch.frankel.conf.automation.AppProperties
-import inet.ipaddr.IPAddress
 import inet.ipaddr.IPAddressString
 import org.springframework.http.HttpStatus.FORBIDDEN
-import org.springframework.web.servlet.function.*
+import org.springframework.web.servlet.function.HandlerFilterFunction
+import org.springframework.web.servlet.function.HandlerFunction
+import org.springframework.web.servlet.function.ServerRequest
+import org.springframework.web.servlet.function.ServerResponse
 import reactor.util.Loggers
 
 
 class WhitelistIPFilterFunction(props: AppProperties) : HandlerFilterFunction<ServerResponse, ServerResponse> {
 
     private val logger = Loggers.getLogger(this::class.java)
-    private val ips: List<IPAddress> by lazy {
-        props.trello.ips.map { IPAddressString(it).address }
-    }
+    private val ips = props.trello.ips.map { IPAddressString(it).address }
 
     override fun filter(request: ServerRequest, next: HandlerFunction<ServerResponse>): ServerResponse {
         val remoteAddress: String? = request.remoteAddress().orElse(null)?.address?.hostAddress

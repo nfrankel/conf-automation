@@ -12,15 +12,14 @@ import com.google.auth.oauth2.GoogleCredentials
 class CalendarFactory(val props: AppProperties) {
 
     fun createInstance(): Calendar {
-        val credentials = GoogleCredentials.fromStream(props.google.calendar.json.byteInputStream())
+        val credentials = GoogleCredentials
+            .fromStream(props.google.calendar.json.byteInputStream())
             .createScoped(CalendarScopes.CALENDAR)
-        return Calendar
-            .Builder(
-                GoogleNetHttpTransport.newTrustedTransport(),
-                GsonFactory.getDefaultInstance(),
-                HttpCredentialsAdapter(credentials)
-            )
-            .setApplicationName(props.name)
-            .build()
+        return Calendar.Builder(
+            GoogleNetHttpTransport.newTrustedTransport(),
+            GsonFactory.getDefaultInstance(),
+            HttpCredentialsAdapter(credentials)
+        ).setApplicationName(props.name)
+        .build()
     }
 }

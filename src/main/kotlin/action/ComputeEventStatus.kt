@@ -7,8 +7,9 @@ import org.slf4j.LoggerFactory
 
 class ComputeEventStatus : JavaDelegate {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(it: DelegateExecution) {
-        val logger = LoggerFactory.getLogger("ch.frankel.conf.automation.action.Status")
         logger.info("[${it.processInstanceId}] Received event ${it.trelloEvent}")
         with(it.trelloEvent.status) {
             it.setVariable(BPMN_STATUS, this)

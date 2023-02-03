@@ -29,9 +29,7 @@ data class CalendarProperties(
     val id: String,
     val json: String,
 ) {
-    val clientEmail: String by lazy {
-        Gson().fromJson(json, Map::class.java)["client_email"] as String
-    }
+    val clientEmail = Gson().fromJson(json, Map::class.java)["client_email"] as String
 }
 
 data class SheetsProperties(

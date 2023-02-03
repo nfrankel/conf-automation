@@ -26,8 +26,13 @@ class AddCalendarEntry(private val client: Calendar, private val props: Calendar
 
     private fun Conference.toCalendarEvent() = Event().apply {
         summary = "${this@toCalendarEvent.name} (${this@toCalendarEvent.location})"
-        start = this@toCalendarEvent.startDate.toEventDateTime()
-        end = this@toCalendarEvent.endDate.toEventDateTime()
+        val startDate = this@toCalendarEvent.startDate
+        val endDate = this@toCalendarEvent.endDate
+        start = startDate.toEventDateTime()
+        end = if (startDate.isEqual(endDate))
+            endDate.toEventDateTime()
+        else
+            endDate.plusDays(1).toEventDateTime()
         colorId = Color.Gray.id
         transparency = Availability.Free.value
     }

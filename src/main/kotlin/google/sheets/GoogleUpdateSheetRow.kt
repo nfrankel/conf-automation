@@ -38,6 +38,7 @@ class GoogleUpdateSheetRow(
             majorDimension = wrapper[0] as String
             range = wrapper[1] as String
             rows = (wrapper[2] as List<List<Any>>)
+                .filter { it.isNotEmpty() }
                 .mapIndexed { index, values -> ResultRow(index + 3, values) }
         }
 

@@ -4,4 +4,3 @@ application:
 spring:
   application.name: ${application.name}
   datasource.driver-class-name: org.postgresql.Driver
-logging.level.reactor.netty.http.client: DEBUG

@@ -1,7 +1,6 @@
 package ch.frankel.conf.automation.google.calendar
 
 import ch.frankel.conf.automation.CalendarProperties
-import ch.frankel.conf.automation.GoogleProperties
 import ch.frankel.conf.automation.action.Conference
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar

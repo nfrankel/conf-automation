@@ -5,7 +5,6 @@ import ch.frankel.conf.automation.action.*
 import ch.frankel.conf.automation.action.Status
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import org.springframework.boot.CommandLineRunner
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

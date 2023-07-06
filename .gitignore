@@ -31,3 +31,6 @@ build/
 .vscode/
 secrets.yml
 .DS_Store
+/root.crt
+.java-version
+.env

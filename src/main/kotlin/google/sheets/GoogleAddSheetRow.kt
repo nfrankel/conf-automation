@@ -12,7 +12,7 @@ class GoogleAddSheetRow(private val client: Sheets, private val props: SheetsPro
 
     fun execute(conference: Conference) {
         client.spreadsheets().values()
-            .append(props.id, "A1:B1", conference.toValueRange(speaker))
+            .append(props.id, "${conference.endDate.year}!A1:B1", conference.toValueRange(speaker))
             .setValueInputOption("USER_ENTERED")
             .execute()
     }

@@ -13,7 +13,7 @@ class GoogleUpdateSheetRow(
 
     fun execute(conference: Conference, status: String) {
         val getResult: ValueRange = client.spreadsheets().values()
-            .get(props.id, "A3:H")
+            .get(props.id, "${conference.endDate.year}!A3:H")
             .execute()
         val typedResult = Result(getResult.values)
         val rangeToUpdate = typedResult.findSubmittedRange(speaker, conference)

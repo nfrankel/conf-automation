@@ -4,7 +4,6 @@ import camundajar.impl.com.google.gson.Gson
 import org.springframework.boot.context.properties.*
 
 @ConfigurationProperties("application")
-@ConstructorBinding
 data class AppProperties(
     val speaker: String,
     val name: String,

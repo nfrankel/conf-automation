@@ -38,4 +38,6 @@ data object BacklogToSubmitted : StatusTransition(Status.Backlog, Status.Submitt
 data object BacklogToAbandoned : StatusTransition(Status.Backlog, Status.Abandoned)
 data object SubmittedToAccepted : StatusTransition(Status.Submitted, Status.Accepted)
 data object SubmittedToRefused : StatusTransition(Status.Submitted, Status.Refused)
-data object IrrelevantChange : CardChange()
+data object IrrelevantChange : CardChange() {
+    override fun toString() = "Irrelevant"
+}

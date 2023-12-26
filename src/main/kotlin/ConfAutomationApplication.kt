@@ -34,7 +34,7 @@ private fun beans() = beans {
     bean { ref<WebClient.Builder>().build() }
     bean { SheetsClientFactory(ref()).createInstance() }
     bean { CalendarFactory(ref()).createInstance() }
-    bean("computeEventStatus") { ComputeEventStatus() }
+    bean("computeEventTransition") { ComputeEventTransition() }
     bean("removeDueDate") { RemoveDueDate(TrelloRemoveDueDate(ref())) }
     bean("extractConference") { ExtractConference(ref(), ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref(), ref<AppProperties>().google.calendar) }

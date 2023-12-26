@@ -2,7 +2,6 @@ package ch.frankel.conf.automation.google.sheets
 
 import ch.frankel.conf.automation.SheetsProperties
 import ch.frankel.conf.automation.action.*
-import ch.frankel.conf.automation.action.Status
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
 import java.time.LocalDate
@@ -28,7 +27,7 @@ class GoogleAddSheetRow(private val client: Sheets, private val props: SheetsPro
                     startDate.formatted,
                     endDate.formatted,
                     "Yes",
-                    Status.Submitted.toString()
+                    "Submitted",
                 )
             )
         )

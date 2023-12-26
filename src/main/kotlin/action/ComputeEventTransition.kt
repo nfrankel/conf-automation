@@ -5,30 +5,23 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.slf4j.LoggerFactory
 
-class ComputeEventStatus : JavaDelegate {
+class ComputeEventTransition : JavaDelegate {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun execute(it: DelegateExecution) {
         logger.info("[${it.processInstanceId}] Received event ${it.trelloEvent}")
-        with(it.trelloEvent.status) {
-            it.setVariable(BPMN_STATUS, this)
-            logger.info("[${it.processInstanceId}] Event status is $this")
+        with(it.trelloEvent.transition) {
+            it.setVariable(BPMN_TRANSITION, this.toString())
+            logger.info("[${it.processInstanceId}] Event transition is $this")
         }
     }
 
-    private val eventStatusMatrix = mapOf(
-        ("Backlog" to "Submitted") to Status.Submitted,
-        ("Submitted" to "Accepted") to Status.Accepted,
-        ("Submitted" to "Refused") to Status.Refused,
-        ("Backlog" to "Abandoned") to Status.Abandoned
-    )
-
-    private val TrelloEvent.status: Status
+    private val TrelloEvent.transition: Transition
         get() {
             val before = action.data.listBefore
             val after = action.data.listAfter
             val key = before?.name to after?.name
-            return eventStatusMatrix.getOrDefault(key, Status.Irrelevant)
+            return transitionStatusMatrix.getOrDefault(key, Transition.Irrelevant)
         }
 }

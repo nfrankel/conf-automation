@@ -20,6 +20,6 @@ class TriggerHandler(private val runtimeService: RuntimeService) {
     }
 
     /* Required by Trello, as it executes a HEAD request to make sure the endpoint is up. */
-    fun head(@Suppress("UNUSED_PARAMETER", "unused") request: ServerRequest) = ServerResponse.ok().build()
+    fun head(@Suppress("UNUSED_PARAMETER") request: ServerRequest) = ServerResponse.ok().build()
 }
 

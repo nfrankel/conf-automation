@@ -8,7 +8,9 @@ import org.camunda.bpm.engine.delegate.JavaDelegate
 class UpdateSheetRow(private val googleUpdateSheetRow: GoogleUpdateSheetRow) : JavaDelegate {
 
     override fun execute(execution: DelegateExecution) {
-        val status = (execution.getVariable(BPMN_STATUS) as Status).toString()
+        val transitionAsString = execution.getVariable(BPMN_TRANSITION) as String
+        val transition = Transition.fromString(transitionAsString)
+        val status = transition.end.toString()
         googleUpdateSheetRow.execute(execution.conference, status)
     }
 }

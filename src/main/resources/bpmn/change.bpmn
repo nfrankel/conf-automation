@@ -3,13 +3,13 @@
   <bpmn:process id="HandleChange" name="Handle Change" isExecutable="true" camunda:historyTimeToLive="P180D">
     <bpmn:sequenceFlow id="SequenceFlow_18k6jre" sourceRef="StartEvent_1" targetRef="ServiceTask_0t8n6tz" />
     <bpmn:sequenceFlow id="SequenceFlow_08pzrt7" name="Submitted" sourceRef="Task_0lxk87u" targetRef="SubProcess_1tsgcqe">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Submitted'}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{transition == 'BacklogToSubmitted'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:endEvent id="EndEvent_12yhp5t">
       <bpmn:incoming>SequenceFlow_19xe1ks</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_19xe1ks" sourceRef="Task_0lxk87u" targetRef="EndEvent_12yhp5t" />
-    <bpmn:serviceTask id="Task_0lxk87u" name="Compute Event Status" default="SequenceFlow_19xe1ks" camunda:delegateExpression="#{computeEventStatus}">
+    <bpmn:serviceTask id="Task_0lxk87u" name="Compute Event Transition" default="SequenceFlow_19xe1ks" camunda:delegateExpression="#{computeEventTransition}">
       <bpmn:incoming>Flow_0fu2m65</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_19xe1ks</bpmn:outgoing>
       <bpmn:outgoing>SequenceFlow_0gjsi7l</bpmn:outgoing>
@@ -21,7 +21,7 @@
       <bpmn:incoming>SequenceFlow_0gjsi7l</bpmn:incoming>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_0gjsi7l" name="Abandoned" sourceRef="Task_0lxk87u" targetRef="ServiceTask_1oyp3pf">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Abandoned'}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{transition == 'BacklogToAbandoned'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:subProcess id="SubProcess_1tsgcqe">
       <bpmn:incoming>SequenceFlow_08pzrt7</bpmn:incoming>
@@ -98,7 +98,7 @@
       </bpmn:serviceTask>
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0369dmx" name="Refused" sourceRef="Task_0lxk87u" targetRef="SubProcess_1e4yx45">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Refused'}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{transition == 'SubmittedToRefused'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:subProcess id="SubProcess_04kl8j1">
       <bpmn:incoming>SequenceFlow_0vrlf4i</bpmn:incoming>
@@ -134,7 +134,7 @@
       <bpmn:sequenceFlow id="Flow_15ea1q2" sourceRef="StartEvent_0setm2e" targetRef="InclusiveGateway_0ehfxvu" />
     </bpmn:subProcess>
     <bpmn:sequenceFlow id="SequenceFlow_0vrlf4i" name="Accepted" sourceRef="Task_0lxk87u" targetRef="SubProcess_04kl8j1">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{status == 'Accepted'}</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{transition == 'SubmittedToAccepted'}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:serviceTask id="ServiceTask_0t8n6tz" name="Extract Conference" camunda:delegateExpression="#{extractConference}">
       <bpmn:incoming>SequenceFlow_18k6jre</bpmn:incoming>

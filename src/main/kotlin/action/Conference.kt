@@ -36,12 +36,12 @@ class Conference(title: String, fields: List<Field<out Any>>): Serializable {
 }
 
 
-abstract class Field<T> {
-    abstract val name: String
-    abstract val value: T
+interface Field<T> {
+    val name: String
+    val value: T
 }
 
-abstract class AbstractDate(item: CustomFieldItem) : Field<TemporalAccessor>() {
+abstract class AbstractDate(item: CustomFieldItem) : Field<TemporalAccessor> {
     override val value: TemporalAccessor = DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(item.value?.date)
 }
 
@@ -53,12 +53,12 @@ class EndDate(item: CustomFieldItem) : AbstractDate(item) {
     override val name = "End date"
 }
 
-class Website(item: CustomFieldItem) : Field<String>() {
+class Website(item: CustomFieldItem) : Field<String> {
     override val name = "Site"
     override val value = item.value?.text as String
 }
 
-object IrrelevantField : Field<Unit>() {
+object IrrelevantField : Field<Unit> {
     override val name = "Not used"
     override val value = Unit
 }

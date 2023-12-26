@@ -9,18 +9,23 @@ import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.EventDateTime
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
+import org.slf4j.LoggerFactory
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class AddCalendarEntry(private val client: Calendar, private val props: CalendarProperties) : JavaDelegate {
 
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun execute(execution: DelegateExecution) {
         val entry = findCalendarEntry(client, props, execution.conference)
         if (entry == null) {
             val event = execution.conference.toCalendarEvent()
             client.events().insert(props.id, event).execute()
+            logger.info("[${execution.processInstanceId}] Calendar entry added for ${execution.conference.name}")
+        } else {
+            logger.error("[${execution.processInstanceId}] Calendar entry already exists for ${execution.conference.name}")
         }
     }
 

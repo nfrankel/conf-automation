@@ -9,7 +9,7 @@ class TrelloRemoveDueDate(private val client: WebClient) {
     private val logger = Loggers.getLogger(this::class.java)
 
     fun execute(processInstanceId: String, cardId: String) {
-        logger.debug("[$processInstanceId] Start action of removing due date")
+        logger.info("[$processInstanceId] Start removing due date on card $cardId")
         val request = mapOf(
             "id" to cardId,
             "value" to null
@@ -20,6 +20,6 @@ class TrelloRemoveDueDate(private val client: WebClient) {
             .retrieve()
             .toBodilessEntity()
             .block()
-        logger.debug("[$processInstanceId] Request to remove due date has been sent")
+        logger.info("[$processInstanceId] Request to remove due date  on card $cardId sent")
     }
 }

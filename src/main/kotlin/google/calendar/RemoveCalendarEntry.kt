@@ -5,12 +5,17 @@ import ch.frankel.conf.automation.conference
 import com.google.api.services.calendar.Calendar
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
+import org.slf4j.LoggerFactory
 
 class RemoveCalendarEntry(private val client: Calendar, private val props: CalendarProperties) : JavaDelegate {
 
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
     override fun execute(execution: DelegateExecution) {
+        logger.info("[${execution.processInstanceId}] Trying to remove calendar entry for ${execution.conference.name}")
         findCalendarEntry(client, props, execution.conference)?.let {
             client.events().delete(props.id, it.id).execute()
+            logger.info("[${execution.processInstanceId}] Calendar entry removed for ${execution.conference.name}")
         }
     }
 }

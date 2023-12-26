@@ -12,7 +12,7 @@ class TriggerHandler(private val runtimeService: RuntimeService) {
         val event = request.body(TrelloEvent::class.java)
         val params = mapOf("event" to event)
         val id = runtimeService
-            .startProcessInstanceByKey("HandleChange", event.cardId, params)
+            .startProcessInstanceByMessage("Card Moved",event.cardId, params)
             .processDefinitionId
         return ServerResponse
             .accepted()

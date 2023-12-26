@@ -17,11 +17,11 @@ class ComputeEventTransition : JavaDelegate {
         }
     }
 
-    private val TrelloEvent.transition: Transition
+    private val TrelloEvent.transition: CardChange
         get() {
             val before = action.data.listBefore
             val after = action.data.listAfter
             val key = before?.name to after?.name
-            return transitionStatusMatrix.getOrDefault(key, Transition.Irrelevant)
+            return CardChange.from(key)
         }
 }

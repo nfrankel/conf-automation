@@ -13,7 +13,7 @@ class UpdateSheetRow(private val googleUpdateSheetRow: GoogleUpdateSheetRow) : J
     override fun execute(execution: DelegateExecution) {
         val transitionAsString = execution.getVariable(BPMN_TRANSITION) as String
         logger.info("[${execution.processInstanceId}] Read transition $transitionAsString")
-        val transition = Transition.fromString(transitionAsString)
+        val transition = CardChange.from(transitionAsString) as StatusTransition
         val status = transition.end.toString()
         googleUpdateSheetRow.execute(execution.conference, status)
         logger.info("[${execution.processInstanceId}] Google Sheet updated with status $status")

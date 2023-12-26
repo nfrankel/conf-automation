@@ -29,14 +29,12 @@ class ConfAutomationApplication
 
 private fun beans() = beans {
     bean { ConfAutomationWebClientCustomizer(ref()) }
-    bean { routes(ref(), ref(), ref(), ref()) }
+    bean { routes(ref(), ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
     bean { ref<WebClient.Builder>().build() }
     bean { SheetsClientFactory(ref()).createInstance() }
     bean { CalendarFactory(ref()).createInstance() }
-    bean("computeEventTransition") { ComputeEventTransition() }
     bean("removeDueDate") { RemoveDueDate(TrelloRemoveDueDate(ref())) }
-    bean("extractConference") { ExtractConference(ref(), ref()) }
     bean("addCalendarEntry") { AddCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
     bean("addSheetRow") {
         val props = ref<AppProperties>()
@@ -57,11 +55,12 @@ private fun beans() = beans {
 
 private fun routes(
     runtimeService: RuntimeService,
+    customFieldsInitializer: CustomFieldsInitializer,
     props: AppProperties,
     whiteListIP: WhitelistIPFilterFunction,
     client: WebClient
 ) = router {
-    val trigger = TriggerHandler(runtimeService)
+    val trigger = TriggerHandler(runtimeService, customFieldsInitializer, client)
     POST("/trigger", trigger::post)
     HEAD("/trigger", trigger::head)
 }.and(

@@ -7,7 +7,7 @@ import org.camunda.bpm.engine.delegate.JavaDelegate
 class RemoveDueDate(private val removeDueDate: TrelloRemoveDueDate) : JavaDelegate {
     override fun execute(execution: DelegateExecution) {
         val processInstanceId = execution.processInstanceId
-        val cardId = execution.trelloEvent.cardId
+        val cardId = execution.businessKey
         removeDueDate.execute(processInstanceId, cardId)
     }
 }

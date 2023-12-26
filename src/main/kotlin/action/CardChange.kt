@@ -1,7 +1,5 @@
 package ch.frankel.conf.automation.action
 
-internal const val BPMN_TRANSITION = "transition"
-
 internal enum class Status {
     Backlog,
     Submitted,

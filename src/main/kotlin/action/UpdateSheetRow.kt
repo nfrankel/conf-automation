@@ -1,6 +1,7 @@
 package ch.frankel.conf.automation.action
 
-import ch.frankel.conf.automation.conference
+import ch.frankel.conf.automation.BPMN_CONFERENCE
+import ch.frankel.conf.automation.BPMN_TRANSITION
 import ch.frankel.conf.automation.google.sheets.GoogleUpdateSheetRow
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
@@ -15,7 +16,7 @@ class UpdateSheetRow(private val googleUpdateSheetRow: GoogleUpdateSheetRow) : J
         logger.info("[${execution.processInstanceId}] Read transition $transitionAsString")
         val transition = CardChange.from(transitionAsString) as StatusTransition
         val status = transition.end.toString()
-        googleUpdateSheetRow.execute(execution.conference, status)
+        googleUpdateSheetRow.execute(execution.getVariable(BPMN_CONFERENCE) as Conference, status)
         logger.info("[${execution.processInstanceId}] Google Sheet updated with status $status")
     }
 }

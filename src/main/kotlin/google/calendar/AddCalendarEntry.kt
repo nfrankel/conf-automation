@@ -1,8 +1,8 @@
 package ch.frankel.conf.automation.google.calendar
 
+import ch.frankel.conf.automation.BPMN_CONFERENCE
 import ch.frankel.conf.automation.CalendarProperties
 import ch.frankel.conf.automation.action.Conference
-import ch.frankel.conf.automation.conference
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
@@ -19,13 +19,14 @@ class AddCalendarEntry(private val client: Calendar, private val props: Calendar
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun execute(execution: DelegateExecution) {
-        val entry = findCalendarEntry(client, props, execution.conference)
+        val conference = execution.getVariable(BPMN_CONFERENCE) as Conference
+        val entry = findCalendarEntry(client, props, conference)
         if (entry == null) {
-            val event = execution.conference.toCalendarEvent()
+            val event = conference.toCalendarEvent()
             client.events().insert(props.id, event).execute()
-            logger.info("[${execution.processInstanceId}] Calendar entry added for ${execution.conference.name}")
+            logger.info("[${execution.processInstanceId}] Calendar entry added for ${conference.name}")
         } else {
-            logger.error("[${execution.processInstanceId}] Calendar entry already exists for ${execution.conference.name}")
+            logger.error("[${execution.processInstanceId}] Calendar entry already exists for ${conference.name}")
         }
     }
 

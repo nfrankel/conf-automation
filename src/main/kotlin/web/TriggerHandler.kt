@@ -30,8 +30,9 @@ class TriggerHandler(
                 BPMN_TRANSITION to transition.toString(),
             )
             val id = runtimeService
-                .startProcessInstanceByMessage("Card Moved", event.cardId, params)
+                .startProcessInstanceByMessage(transition.toString(), event.cardId, params)
                 .processDefinitionId
+            logger.info("Started process instance with id $id")
             return ServerResponse.accepted().body("{ id: $id }")
         }
         return ServerResponse.noContent().build()

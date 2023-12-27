@@ -24,25 +24,28 @@ class TriggerHandler(
     fun post(request: ServerRequest): ServerResponse {
         val event = request.body(TrelloEvent::class.java)
         logger.info("Received event is $event")
-        val conference = extractConference(event)
         val transition = extractTransition(event)
-        logger.info("Computed transition for ${conference.name} is $transition")
-        val params = mapOf(
-            BPMN_CONFERENCE to conference,
-            BPMN_TRANSITION to transition.toString(),
-        )
-        val result = runtimeService.createMessageCorrelation(transition.toString())
-            .processInstanceBusinessKey(event.cardId)
-            .setVariables(params)
-            .correlateWithResult()
-        return if (result.resultType == Execution) {
-            logger.info("Started process instance with id ${result.execution.processInstanceId} for ${conference.name} with $transition")
-            ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
-        } else {
-            // result.resultType == ProcessDefinition
-            logger.info("Existing process instance with id ${result.processInstance.processInstanceId} for ${conference.name} with $transition found. Continuing workflow")
-            ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
+        logger.info("Computed transition for ${event.action.data.card.name} is $transition")
+        if (transition != IrrelevantChange) {
+            val conference = extractConference(event)
+            val params = mapOf(
+                BPMN_CONFERENCE to conference,
+                BPMN_TRANSITION to transition.toString(),
+            )
+            val result = runtimeService.createMessageCorrelation(transition.toString())
+                .processInstanceBusinessKey(event.cardId)
+                .setVariables(params)
+                .correlateWithResult()
+            return if (result.resultType == Execution) {
+                logger.info("Started process instance with id ${result.execution.processInstanceId} for ${conference.name} with $transition")
+                ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
+            } else {
+                // result.resultType == ProcessDefinition
+                logger.info("Existing process instance with id ${result.processInstance.processInstanceId} for ${conference.name} with $transition found. Continuing workflow")
+                ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
+            }
         }
+        return ServerResponse.noContent().build()
     }
 
     private fun extractTransition(event: TrelloEvent): CardChange {

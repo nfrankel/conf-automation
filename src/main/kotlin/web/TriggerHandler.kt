@@ -3,6 +3,7 @@ package ch.frankel.conf.automation.web
 import ch.frankel.conf.automation.*
 import ch.frankel.conf.automation.action.*
 import org.camunda.bpm.engine.RuntimeService
+import org.camunda.bpm.engine.runtime.MessageCorrelationResultType
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.servlet.function.ServerRequest
@@ -23,17 +24,22 @@ class TriggerHandler(
         logger.info("Received event is $event")
         val conference = extractConference(event)
         val transition = extractTransition(event)
-        logger.info("Computed transition is $transition")
+        logger.info("Computed transition for ${conference.name} is $transition")
         if (transition != IrrelevantChange) {
             val params = mapOf(
                 BPMN_CONFERENCE to conference,
                 BPMN_TRANSITION to transition.toString(),
             )
-            val id = runtimeService
-                .startProcessInstanceByMessage(transition.toString(), event.cardId, params)
-                .processDefinitionId
-            logger.info("Started process instance with id $id")
-            return ServerResponse.accepted().body("{ id: $id }")
+            val result = runtimeService.createMessageCorrelation(transition.toString())
+                .processInstanceBusinessKey(event.cardId)
+                .setVariables(params)
+                .correlateWithResult()
+            if (result.resultType == MessageCorrelationResultType.Execution) {
+                logger.info("Started process instance with id ${result.execution.processInstanceId}")
+            } else {
+                logger.info("Existing process instance with id ${result.execution.processInstanceId} found. Continuing workflow")
+            }
+            return ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
         }
         return ServerResponse.noContent().build()
     }

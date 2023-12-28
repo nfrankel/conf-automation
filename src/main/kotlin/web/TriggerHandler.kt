@@ -3,9 +3,7 @@ package ch.frankel.conf.automation.web
 import ch.frankel.conf.automation.*
 import ch.frankel.conf.automation.action.*
 import org.camunda.bpm.engine.RuntimeService
-import org.camunda.bpm.engine.runtime.MessageCorrelationResultType
 import org.camunda.bpm.engine.runtime.MessageCorrelationResultType.Execution
-import org.camunda.bpm.engine.runtime.MessageCorrelationResultType.ProcessDefinition
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.servlet.function.ServerRequest
@@ -24,35 +22,32 @@ class TriggerHandler(
     fun post(request: ServerRequest): ServerResponse {
         val event = request.body(TrelloEvent::class.java)
         logger.info("Received event is $event")
-        val transition = extractTransition(event)
-        logger.info("Computed transition for ${event.action.data.card.name} is $transition")
-        if (transition != IrrelevantChange) {
+        val message = extractMessage(event)
+        logger.info("Computed message for ${event.action.data.card.name} is $message")
+        if (message != null) {
             val conference = extractConference(event)
-            val params = mapOf(
-                BPMN_CONFERENCE to conference,
-                BPMN_TRANSITION to transition.toString(),
-            )
-            val result = runtimeService.createMessageCorrelation(transition.toString())
+            val params = mapOf(BPMN_CONFERENCE to conference)
+            val result = runtimeService.createMessageCorrelation(message.toString())
                 .processInstanceBusinessKey(event.cardId)
                 .setVariables(params)
                 .correlateWithResult()
             return if (result.resultType == Execution) {
-                logger.info("Started process instance with id ${result.execution.processInstanceId} for ${conference.name} with $transition")
+                logger.info("Started process instance with id ${result.execution.processInstanceId} for ${conference.name} with $message")
                 ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
             } else {
                 // result.resultType == ProcessDefinition
-                logger.info("Existing process instance with id ${result.processInstance.processInstanceId} for ${conference.name} with $transition found. Continuing workflow")
+                logger.info("Existing process instance with id ${result.processInstance.processInstanceId} for ${conference.name} with $message found. Continuing workflow")
                 ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
             }
         }
         return ServerResponse.noContent().build()
     }
 
-    private fun extractTransition(event: TrelloEvent): CardChange {
+    private fun extractMessage(event: TrelloEvent): String? {
         val before = event.action.data.listBefore
         val after = event.action.data.listAfter
-        val key = before?.name to after?.name
-        return CardChange.from(key)
+        if (before?.name != after?.name) return after?.name
+        return null
     }
 
     private fun extractConference(event: TrelloEvent): Conference {

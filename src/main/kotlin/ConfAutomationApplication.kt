@@ -9,7 +9,7 @@ import ch.frankel.conf.automation.google.sheets.GoogleAddSheetRow
 import ch.frankel.conf.automation.google.sheets.GoogleUpdateSheetRow
 import ch.frankel.conf.automation.google.sheets.SheetsClientFactory
 import ch.frankel.conf.automation.trello.ConfAutomationWebClientCustomizer
-import ch.frankel.conf.automation.trello.TrelloRemoveDueDate
+import ch.frankel.conf.automation.trello.TrelloTickDueDate
 import ch.frankel.conf.automation.web.RegisterHandler
 import ch.frankel.conf.automation.web.TriggerHandler
 import ch.frankel.conf.automation.web.WhitelistIPFilterFunction
@@ -34,7 +34,7 @@ private fun beans() = beans {
     bean { ref<WebClient.Builder>().build() }
     bean { SheetsClientFactory(ref()).createInstance() }
     bean { CalendarFactory(ref()).createInstance() }
-    bean("removeDueDate") { RemoveDueDate(TrelloRemoveDueDate(ref())) }
+    bean("tickDueDate") { TickDueDate(TrelloTickDueDate(ref())) }
     bean("addCalendarEntry") { AddCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
     bean("addSheetRow") {
         val props = ref<AppProperties>()

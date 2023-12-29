@@ -24,37 +24,48 @@ class TriggerHandler(
         logger.info("Received event is $event")
         val message = extractMessage(event)
         logger.info("Computed message for ${event.action.data.card.name} is $message")
-        if (message != null) {
-            if (message == "Backlog") {
-                logger.info("Card ${event.action.data.card.name} created/updated on Backlog state. Ignoring")
-                return ServerResponse.noContent().build()
+        return when (message) {
+            Message.Irrelevant -> {
+                logger.info("Card ${event.action.data.card.name} is irrelevant. Ignoring")
+                ServerResponse.noContent().build()
             }
-            val conference = extractConference(event)
-            val params = mapOf(BPMN_CONFERENCE to conference)
-            val result = runtimeService.createMessageCorrelation(message.toString())
-                .processInstanceBusinessKey(event.cardId)
-                .setVariables(params)
-                .correlateWithResult()
-            return if (result.resultType == Execution) {
-                logger.info("Started process instance with id ${result.execution.processInstanceId} for ${conference.name} with $message")
-                ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
-            } else {
-                // result.resultType == ProcessDefinition
-                logger.info("Existing process instance with id ${result.processInstance.processInstanceId} for ${conference.name} with $message found. Continuing workflow")
-                ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
+            Message.Created -> {
+                logger.info("Card ${event.action.data.card.name} created/updated on Backlog state. Ignoring")
+                ServerResponse.noContent().build()
+            }
+            else -> {
+                val conference = extractConference(event)
+                val params = mapOf(BPMN_CONFERENCE to conference)
+                val result = runtimeService.createMessageCorrelation(message.toString())
+                    .processInstanceBusinessKey(event.cardId)
+                    .setVariables(params)
+                    .correlateWithResult()
+                return if (result.resultType == Execution) {
+                    logger.info("Started process instance with id ${result.execution.processInstanceId} for ${conference.name} with $message")
+                    ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
+                } else {
+                    // result.resultType == ProcessDefinition
+                    logger.info("Existing process instance with id ${result.processInstance.processInstanceId} for ${conference.name} with $message found. Continuing workflow")
+                    ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
+                }
             }
         }
-        return ServerResponse.noContent().build()
     }
 
-    private fun extractMessage(event: TrelloEvent): String? {
-        val before = event.action.data.listBefore
-        val after = event.action.data.listAfter
-        // Transition from one state to another
-        if (before?.name != after?.name) return after?.name
-        // Card creation on Backlog state
-        if (event.action.data.list?.name == "Backlog") return event.action.data.list.name
-        return null
+    private fun extractMessage(event: TrelloEvent): Message {
+        return when (event.action.type) {
+            ActionType.COPY_CARD -> Message.Created
+            ActionType.UPDATE_CUSTOM_FIELD_ITEM -> Message.Irrelevant
+            ActionType.ADD_LABEL_TO_CARD -> Message.Irrelevant
+            ActionType.UPDATE_CARD -> {
+                val before = event.action.data.listBefore
+                val after = event.action.data.listAfter
+                // Transition from one state to another
+                if (before?.name != after?.name) return Message(after?.name)
+                // Anything else
+                return Message.Irrelevant
+            }
+        }
     }
 
     private fun extractConference(event: TrelloEvent): Conference {

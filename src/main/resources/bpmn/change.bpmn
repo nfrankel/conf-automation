@@ -19,11 +19,11 @@
     </bpmn:endEvent>
     <bpmn:startEvent id="StartEvent_1" name="Submitted">
       <bpmn:outgoing>Flow_10cj0tv</bpmn:outgoing>
-      <bpmn:messageEventDefinition messageRef="backlog_to_submitted" />
+      <bpmn:messageEventDefinition messageRef="submitted" />
     </bpmn:startEvent>
     <bpmn:startEvent id="Event_15e82i5" name="Abandoned">
       <bpmn:outgoing>SequenceFlow_0gjsi7l</bpmn:outgoing>
-      <bpmn:messageEventDefinition messageRef="backlog_to_abandoned" />
+      <bpmn:messageEventDefinition messageRef="abandoned" />
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0vrlf4i" sourceRef="Event_0831y49" targetRef="Activity_1a4vzdl" />
     <bpmn:inclusiveGateway id="InclusiveGateway_03i0qy2">
@@ -86,12 +86,12 @@
     <bpmn:intermediateCatchEvent id="Event_0831y49" name="Accepted">
       <bpmn:incoming>Flow_0yo7yhz</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0vrlf4i</bpmn:outgoing>
-      <bpmn:messageEventDefinition messageRef="submitted_to_accepted" />
+      <bpmn:messageEventDefinition messageRef="accepted" />
     </bpmn:intermediateCatchEvent>
     <bpmn:intermediateCatchEvent id="Event_1ujg97z" name="Refused">
       <bpmn:incoming>Flow_0x5e6b8</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0369dmx</bpmn:outgoing>
-      <bpmn:messageEventDefinition messageRef="submitted_to_refused" />
+      <bpmn:messageEventDefinition messageRef="refused" />
     </bpmn:intermediateCatchEvent>
     <bpmn:inclusiveGateway id="Gateway_0mn8vog">
       <bpmn:incoming>Flow_10cj0tv</bpmn:incoming>
@@ -134,10 +134,10 @@
       <bpmn:script>execution.setLocalVariable("status", "Refused")</bpmn:script>
     </bpmn:scriptTask>
   </bpmn:process>
-  <bpmn:message id="backlog_to_submitted" name="BacklogToSubmitted" />
-  <bpmn:message id="backlog_to_abandoned" name="BacklogToAbandoned" />
-  <bpmn:message id="submitted_to_accepted" name="SubmittedToAccepted" />
-  <bpmn:message id="submitted_to_refused" name="SubmittedToRefused" />
+  <bpmn:message id="submitted" name="Submitted" />
+  <bpmn:message id="abandoned" name="Abandoned" />
+  <bpmn:message id="accepted" name="Accepted" />
+  <bpmn:message id="refused" name="Refused" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="HandleChange">
       <bpmndi:BPMNShape id="ServiceTask_1oyp3pf_di" bpmnElement="ServiceTask_1oyp3pf">

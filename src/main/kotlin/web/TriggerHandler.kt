@@ -25,6 +25,10 @@ class TriggerHandler(
         val message = extractMessage(event)
         logger.info("Computed message for ${event.action.data.card.name} is $message")
         if (message != null) {
+            if (message == "Backlog") {
+                logger.info("Card ${event.action.data.card.name} created/updated on Backlog state. Ignoring")
+                return ServerResponse.noContent().build()
+            }
             val conference = extractConference(event)
             val params = mapOf(BPMN_CONFERENCE to conference)
             val result = runtimeService.createMessageCorrelation(message.toString())
@@ -46,7 +50,10 @@ class TriggerHandler(
     private fun extractMessage(event: TrelloEvent): String? {
         val before = event.action.data.listBefore
         val after = event.action.data.listAfter
+        // Transition from one state to another
         if (before?.name != after?.name) return after?.name
+        // Card creation on Backlog state
+        if (event.action.data.list?.name == "Backlog") return event.action.data.list.name
         return null
     }
 

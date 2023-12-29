@@ -124,14 +124,14 @@
     <bpmn:scriptTask id="Activity_1a4vzdl" name="Set status to Accepted" scriptFormat="groovy">
       <bpmn:incoming>SequenceFlow_0vrlf4i</bpmn:incoming>
       <bpmn:outgoing>Flow_19h0hd8</bpmn:outgoing>
-      <bpmn:script>execution.setLocalVariable("status", "Accepted")</bpmn:script>
+      <bpmn:script>execution.setVariableLocal("status", "Accepted")</bpmn:script>
     </bpmn:scriptTask>
     <bpmn:sequenceFlow id="Flow_19h0hd8" sourceRef="Activity_1a4vzdl" targetRef="InclusiveGateway_0ehfxvu" />
     <bpmn:sequenceFlow id="Flow_009xv64" sourceRef="Activity_0v0id2s" targetRef="InclusiveGateway_03i0qy2" />
     <bpmn:scriptTask id="Activity_0v0id2s" name="Set status to Refused">
       <bpmn:incoming>SequenceFlow_0369dmx</bpmn:incoming>
       <bpmn:outgoing>Flow_009xv64</bpmn:outgoing>
-      <bpmn:script>execution.setLocalVariable("status", "Refused")</bpmn:script>
+      <bpmn:script>execution.setVariableLocal("status", "Refused")</bpmn:script>
     </bpmn:scriptTask>
   </bpmn:process>
   <bpmn:message id="submitted" name="Submitted" />

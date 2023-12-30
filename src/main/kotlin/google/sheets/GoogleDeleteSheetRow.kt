@@ -15,11 +15,12 @@ class GoogleDeleteSheetRow(
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun execute(conference: Conference) {
-        val getResult: ValueRange = client.spreadsheets()
+        val rows: ValueRange = client.spreadsheets()
             .values()[props.id, "${conference.endDate.year}!A3:H"]
             .execute()
-        val typedResult = Result(getResult.values)
+        val typedResult = Result(rows.values)
         val rowIndicesToUpdate = typedResult.findRowIndices(speaker, conference)
+        val sheetId = getSheetId(conference)
         val response = client.spreadsheets()
             .batchUpdate(
                 props.id,
@@ -27,6 +28,7 @@ class GoogleDeleteSheetRow(
                     requests = listOf(Request().apply {
                         deleteDimension = DeleteDimensionRequest().apply {
                             range = DimensionRange().apply {
+                                this.sheetId = sheetId
                                 dimension = "ROWS"
                                 startIndex = rowIndicesToUpdate.first()
                                 endIndex = rowIndicesToUpdate.last() + 1 // End index is exclusive
@@ -40,6 +42,10 @@ class GoogleDeleteSheetRow(
         }
         logger.info("Row(s) $rowIndicesToUpdate containing ${conference.name} deleted in Google Sheet")
     }
+
+    private fun getSheetId(conference: Conference) = client.spreadsheets()[props.id].execute().sheets.single {
+        it.properties.title == conference.endDate.year.toString()
+    }.properties.sheetId
 
     class Result(values: Collection<Any>) {
         private val majorDimension: String

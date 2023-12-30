@@ -3,7 +3,7 @@ package ch.frankel.conf.automation
 internal const val BPMN_CONFERENCE = "conference"
 
 internal enum class Message {
-    Created, Submitted, Refused, Abandoned, Irrelevant, Backlog;
+    Created, Submitted, Accepted, Refused, Abandoned, Irrelevant, Backlog;
 
     companion object {
         operator fun invoke(name: String?): Message {

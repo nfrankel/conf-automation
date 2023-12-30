@@ -44,10 +44,15 @@ private fun beans() = beans {
         AddSheetRow(googleAddSheetRow)
     }
     bean("removeCalendarEntry") { RemoveCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
-    bean("updateSheetRow") {
+    bean("acceptSheetRow") {
         val props = ref<AppProperties>()
         val googleUpdateSheetRow = GoogleUpdateSheetRow(ref(), props.google.sheets, props.speaker)
-        UpdateSheetRow(googleUpdateSheetRow)
+        UpdateSheetRow(googleUpdateSheetRow, "Accepted")
+    }
+    bean("refuseSheetRow") {
+        val props = ref<AppProperties>()
+        val googleUpdateSheetRow = GoogleUpdateSheetRow(ref(), props.google.sheets, props.speaker)
+        UpdateSheetRow(googleUpdateSheetRow, "Refused")
     }
     bean("deleteSheetRow") {
         val props = ref<AppProperties>()

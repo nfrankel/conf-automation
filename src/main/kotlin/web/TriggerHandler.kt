@@ -25,29 +25,26 @@ class TriggerHandler(
         val message = extractMessage(event)
         logger.info("Computed message for ${event.action.data.card.name} is $message")
         return when (message) {
-            Message.Irrelevant -> {
-                logger.info("Card ${event.action.data.card.name} is irrelevant. Ignoring")
+            Message.Irrelevant, Message.Created -> {
+                logger.info("Igoring card ${event.action.data.card.name} with status $message")
                 ServerResponse.noContent().build()
             }
-            Message.Created -> {
-                logger.info("Card ${event.action.data.card.name} created/updated on Backlog state. Ignoring")
-                ServerResponse.noContent().build()
+            Message.Submitted, Message.Abandoned -> {
+                val conference = extractConference(event)
+                val params = mapOf(BPMN_CONFERENCE to conference)
+                val processInstance = runtimeService.startProcessInstanceByMessage(message.toString(), event.cardId, params)
+                logger.info("Started process instance with id ${processInstance.processInstanceId} for ${conference.name} with $message")
+                ServerResponse.accepted().body("{ id: ${processInstance.processInstanceId} }")
             }
-            else -> {
+            Message.Backlog, Message.Accepted, Message.Refused -> {
                 val conference = extractConference(event)
                 val params = mapOf(BPMN_CONFERENCE to conference)
                 val result = runtimeService.createMessageCorrelation(message.toString())
                     .processInstanceBusinessKey(event.cardId)
                     .setVariables(params)
                     .correlateWithResult()
-                return if (result.resultType == Execution) {
-                    logger.info("Started process instance with id ${result.execution.processInstanceId} for ${conference.name} with $message")
-                    ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
-                } else {
-                    // result.resultType == ProcessDefinition
-                    logger.info("Existing process instance with id ${result.processInstance.processInstanceId} for ${conference.name} with $message found. Continuing workflow")
-                    ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
-                }
+                logger.info("Existing process instance with id ${result.execution.processInstanceId} for ${conference.name} with $message")
+                return ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
             }
         }
     }

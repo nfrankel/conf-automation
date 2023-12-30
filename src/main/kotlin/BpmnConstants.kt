@@ -2,7 +2,7 @@ package ch.frankel.conf.automation
 
 internal const val BPMN_CONFERENCE = "conference"
 
-internal enum class Message {
+enum class Message {
     Created, Submitted, Accepted, Refused, Abandoned, Irrelevant, Backlog;
 
     companion object {

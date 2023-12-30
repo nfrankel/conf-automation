@@ -47,12 +47,17 @@ private fun beans() = beans {
     bean("acceptSheetRow") {
         val props = ref<AppProperties>()
         val googleUpdateSheetRow = GoogleUpdateSheetRow(ref(), props.google.sheets, props.speaker)
-        UpdateSheetRow(googleUpdateSheetRow, "Accepted")
+        UpdateSheetRow(googleUpdateSheetRow, Message.Accepted)
     }
     bean("refuseSheetRow") {
         val props = ref<AppProperties>()
         val googleUpdateSheetRow = GoogleUpdateSheetRow(ref(), props.google.sheets, props.speaker)
-        UpdateSheetRow(googleUpdateSheetRow, "Refused")
+        UpdateSheetRow(googleUpdateSheetRow, Message.Refused)
+    }
+    bean("abandonSheetRow") {
+        val props = ref<AppProperties>()
+        val googleUpdateSheetRow = GoogleUpdateSheetRow(ref(), props.google.sheets, props.speaker)
+        UpdateSheetRow(googleUpdateSheetRow, Message.Abandoned)
     }
     bean("deleteSheetRow") {
         val props = ref<AppProperties>()

@@ -2,6 +2,8 @@ package ch.frankel.conf.automation.web
 
 import ch.frankel.conf.automation.*
 import ch.frankel.conf.automation.action.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.camunda.bpm.engine.RuntimeService
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.function.client.WebClient
@@ -35,14 +37,14 @@ class TriggerHandler(
             }
             Message.Submitted, Message.Abandoned -> {
                 val conference = extractConference(event)
-                val params = mapOf(BPMN_CONFERENCE to conference)
+                val params = mapOf(BPMN_CONFERENCE to Json.encodeToString(conference))
                 val processInstance = runtimeService.startProcessInstanceByMessage(message.toString(), event.cardId, params)
                 logger.info("[${processInstance.processInstanceId}] Started process instance with $message for ${conference.name}")
                 ServerResponse.accepted().body("{ id: ${processInstance.processInstanceId} }")
             }
             Message.Backlog, Message.Accepted, Message.Refused, Message.Published -> {
                 val conference = extractConference(event)
-                val params = mapOf(BPMN_CONFERENCE to conference)
+                val params = mapOf(BPMN_CONFERENCE to Json.encodeToString(conference))
                 val result = runtimeService.createMessageCorrelation(message.toString())
                     .processInstanceBusinessKey(event.cardId)
                     .setVariables(params)

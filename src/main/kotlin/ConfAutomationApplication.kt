@@ -14,12 +14,15 @@ import ch.frankel.conf.automation.trello.TrelloTickDueDate
 import ch.frankel.conf.automation.web.RegisterHandler
 import ch.frankel.conf.automation.web.TriggerHandler
 import ch.frankel.conf.automation.web.WhitelistIPFilterFunction
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.spring.boot.starter.annotation.EnableProcessApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
+import org.springframework.http.converter.json.KotlinSerializationJsonHttpMessageConverter
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.servlet.function.router
 
@@ -28,6 +31,7 @@ import org.springframework.web.servlet.function.router
 @ConfigurationPropertiesScan
 class ConfAutomationApplication
 
+@OptIn(ExperimentalSerializationApi::class)
 private fun beans() = beans {
     bean { ConfAutomationWebClientCustomizer(ref()) }
     bean { routes(ref(), ref(), ref(), ref(), ref()) }
@@ -66,6 +70,12 @@ private fun beans() = beans {
     }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref(),  ref<AppProperties>().google.calendar) }
     bean { LogAppVersionStartupListener(ref<AppProperties>().version) }
+    bean { KotlinSerializationJsonHttpMessageConverter(
+        Json {
+            ignoreUnknownKeys = true
+            explicitNulls = false
+        }
+    )}
     profile("production") {
         bean { WhitelistIPFilterFunction(ref()) }
     }

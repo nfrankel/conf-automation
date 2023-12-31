@@ -7,8 +7,5 @@ application:
       - 54.164.77.56
       - 54.209.149.230
       - 18.234.32.224/28
-spring:
-  devtools:
-    add-properties: false
 server:
   forward-headers-strategy: framework

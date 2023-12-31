@@ -131,6 +131,12 @@
                         <!-- Should be authenticated via docker login first -->
                         <image>rg.fr-par.scw.cloud/funcscwdefaultzuueairq/confautomation:${project.version}</image>
                     </to>
+                    <container>
+                        <jvmFlags>
+                            <jvmFlag>-XX:-TieredCompilation</jvmFlag>
+                            <jvmFlag>-XX:TieredStopAtLevel=1</jvmFlag>
+                        </jvmFlags>
+                    </container>
                 </configuration>
             </plugin>
         </plugins>

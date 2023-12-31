@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Serializable
 import java.time.LocalDate
 
-data class TrelloEvent(val action: Action, val model: Any) : Serializable {
+data class TrelloEvent(val action: Action, val model: Any, val webhook: Any) : Serializable {
     val cardId = this.action.data.card.id
 }
 

@@ -23,28 +23,28 @@ class TriggerHandler(
         val event = request.body(TrelloEvent::class.java)
         logger.info("Received event is $event")
         val message = extractMessage(event)
-        logger.info("Computed message for ${event.action.data.card.name} is $message")
+        logger.info("Received message $message for ${event.action.data.card.name}")
         return when (message) {
             Message.Irrelevant, Message.Created -> {
-                logger.info("Igoring card ${event.action.data.card.name} with status $message")
+                logger.info("Ignoring message $message for ${event.action.data.card.name}")
                 ServerResponse.noContent().build()
             }
             Message.Submitted, Message.Abandoned -> {
                 val conference = extractConference(event)
                 val params = mapOf(BPMN_CONFERENCE to conference)
                 val processInstance = runtimeService.startProcessInstanceByMessage(message.toString(), event.cardId, params)
-                logger.info("Started process instance with id ${processInstance.processInstanceId} for ${conference.name} with $message")
+                logger.info("[${processInstance.processInstanceId}] Started process instance with $message for ${conference.name}")
                 ServerResponse.accepted().body("{ id: ${processInstance.processInstanceId} }")
             }
-            Message.Backlog, Message.Accepted, Message.Refused -> {
+            Message.Backlog, Message.Accepted, Message.Refused, Message.Published -> {
                 val conference = extractConference(event)
                 val params = mapOf(BPMN_CONFERENCE to conference)
                 val result = runtimeService.createMessageCorrelation(message.toString())
                     .processInstanceBusinessKey(event.cardId)
                     .setVariables(params)
                     .correlateWithResult()
-                logger.info("Existing process instance with id ${result.execution.processInstanceId} for ${conference.name} with $message")
-                return ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
+                logger.info("[${result.execution.processInstanceId}] Existing process instance found for ${conference.name}, continuing with $message")
+                ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
             }
         }
     }

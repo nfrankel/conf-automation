@@ -5,4 +5,5 @@ application:
 spring:
   application.name: ${application.name}
   datasource.driver-class-name: org.postgresql.Driver
+  main.banner-mode: off
 camunda.bpm.history-level: none

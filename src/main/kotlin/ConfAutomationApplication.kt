@@ -77,7 +77,7 @@ private fun routes(
     whiteListIP: WhitelistIPFilterFunction,
     client: WebClient
 ) = router {
-    val trigger = TriggerHandler(runtimeService, customFieldsInitializer, client)
+    val trigger = TriggerHandler(runtimeService, customFieldsInitializer, client, mutableSetOf())
     POST("/trigger", trigger::post)
     HEAD("/trigger", trigger::head)
 }.and(

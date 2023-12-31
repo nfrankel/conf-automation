@@ -15,6 +15,7 @@ class TriggerHandler(
     private val runtimeService: RuntimeService,
     private val fieldsInitializer: CustomFieldsInitializer,
     private val client: WebClient,
+    private val eventSet: MutableSet<TrelloEvent>
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -22,8 +23,12 @@ class TriggerHandler(
     fun post(request: ServerRequest): ServerResponse {
         val event = request.body(TrelloEvent::class.java)
         logger.info("Received event is $event")
+        if (eventSet.contains(event)) {
+            logger.info("Ignoring duplicate event $event")
+            return ServerResponse.noContent().build()
+        }
         val message = extractMessage(event)
-        logger.info("Received message $message for ${event.action.data.card.name}")
+        logger.info("Extracted message $message for ${event.action.data.card.name}")
         return when (message) {
             Message.Irrelevant, Message.Created -> {
                 logger.info("Ignoring message $message for ${event.action.data.card.name}")

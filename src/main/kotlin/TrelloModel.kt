@@ -6,6 +6,14 @@ import java.time.LocalDate
 
 data class TrelloEvent(val action: Action, val model: Any, val webhook: Any) : Serializable {
     val cardId = this.action.data.card.id
+
+    override fun toString() = """
+        | TrelloEvent(
+        |   action=$action,
+        |   model=$model,
+        |   webhook=$webhook
+        | )
+    """.trimIndent()
 }
 
 data class Action(

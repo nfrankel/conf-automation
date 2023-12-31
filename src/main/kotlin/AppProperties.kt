@@ -7,6 +7,7 @@ import org.springframework.boot.context.properties.*
 data class AppProperties(
     val speaker: String,
     val name: String,
+    val version: String,
     val trello: TrelloProperties,
     val google: GoogleProperties
 )

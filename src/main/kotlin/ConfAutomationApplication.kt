@@ -65,6 +65,7 @@ private fun beans() = beans {
         DeleteSheetRow(googleDeleteSheetRow)
     }
     bean("updateCalendarEntry") { UpdateCalendarEntry(ref(),  ref<AppProperties>().google.calendar) }
+    bean { LogAppVersionStartupListener(ref<AppProperties>().version) }
     profile("production") {
         bean { WhitelistIPFilterFunction(ref()) }
     }

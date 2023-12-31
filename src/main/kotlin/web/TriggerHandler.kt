@@ -3,7 +3,6 @@ package ch.frankel.conf.automation.web
 import ch.frankel.conf.automation.*
 import ch.frankel.conf.automation.action.*
 import org.camunda.bpm.engine.RuntimeService
-import org.camunda.bpm.engine.runtime.MessageCorrelationResultType.Execution
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.servlet.function.ServerRequest

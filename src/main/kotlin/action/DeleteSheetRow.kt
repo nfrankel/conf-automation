@@ -12,8 +12,8 @@ class DeleteSheetRow(private val googleDeleteSheetRow: GoogleDeleteSheetRow) : J
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun execute(execution: DelegateExecution) {
-        val stringifiedConference = execution.getVariable(BPMN_CONFERENCE) as String
-        val conference = Json.decodeFromString<Conference>(stringifiedConference)
+        val conferenceAsJson = execution.getVariable(BPMN_CONFERENCE) as String
+        val conference = Json.decodeFromString<Conference>(conferenceAsJson)
         googleDeleteSheetRow.execute(conference)
         logger.info("[${execution.processInstanceId}] ${conference.name} deleted from Google Sheet")
     }

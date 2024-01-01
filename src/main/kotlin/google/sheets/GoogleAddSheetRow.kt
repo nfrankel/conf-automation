@@ -39,5 +39,5 @@ class GoogleAddSheetRow(private val client: Sheets, private val props: SheetsPro
     }
 
     private val Instant.formatted: String
-        get() = DateTimeFormatter.ISO_LOCAL_DATE.format(this.toJavaInstant())
+        get() = DateTimeFormatter.ISO_LOCAL_DATE.format(this.toLocalDateTime(TimeZone.UTC).toJavaLocalDateTime())
 }

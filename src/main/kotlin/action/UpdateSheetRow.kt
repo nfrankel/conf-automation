@@ -3,6 +3,7 @@ package ch.frankel.conf.automation.action
 import ch.frankel.conf.automation.BPMN_CONFERENCE
 import ch.frankel.conf.automation.Message
 import ch.frankel.conf.automation.google.sheets.GoogleUpdateSheetRow
+import kotlinx.serialization.json.Json
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.slf4j.LoggerFactory
@@ -12,8 +13,9 @@ class UpdateSheetRow(private val googleUpdateSheetRow: GoogleUpdateSheetRow, pri
     private val logger = LoggerFactory.getLogger(this::class.java)
 
     override fun execute(execution: DelegateExecution) {
-        logger.info("[${execution.processInstanceId}] Read message $status")
-        googleUpdateSheetRow.execute(execution.getVariable(BPMN_CONFERENCE) as Conference, status.toString())
+        val conferenceAsJson = execution.getVariable(BPMN_CONFERENCE) as String
+        val conference = Json.decodeFromString<Conference>(conferenceAsJson)
+        googleUpdateSheetRow.execute(conference, status.toString())
         logger.info("[${execution.processInstanceId}] Google Sheet updated with status $status")
     }
 }

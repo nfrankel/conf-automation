@@ -11,6 +11,6 @@ class LogAppVersionStartupListener(private val version: String) {
 
     @EventListener
     fun onStartup(event: ApplicationReadyEvent) {
-        logger.info("Starting application v$version")
+        logger.info("Application version: v$version")
     }
 }

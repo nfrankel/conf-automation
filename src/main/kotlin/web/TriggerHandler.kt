@@ -86,7 +86,7 @@ class TriggerHandler(
         .block() ?: emptyList()
 
     /* Required by Trello, as it executes a HEAD request to make sure the endpoint is up. */
-    fun head(@Suppress("UNUSED_PARAMETER") request: ServerRequest) = ServerResponse.ok().build()
+    fun head(request: ServerRequest) = ServerResponse.ok().build()
 
     private fun getField(item: CustomFieldItem): Mono<Field<out Any>> =
         fieldsInitializer.fields

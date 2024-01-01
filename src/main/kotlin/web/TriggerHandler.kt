@@ -5,7 +5,6 @@ import ch.frankel.conf.automation.action.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.camunda.bpm.engine.RuntimeService
-import org.camunda.bpm.engine.runtime.MessageCorrelationResultType
 import org.camunda.bpm.engine.runtime.MessageCorrelationResultType.ProcessDefinition
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.function.client.WebClient

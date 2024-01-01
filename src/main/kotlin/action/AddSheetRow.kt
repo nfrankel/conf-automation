@@ -15,6 +15,6 @@ class AddSheetRow(private val googleAddSheetRow: GoogleAddSheetRow) : JavaDelega
         val conferenceAsJson = execution.getVariable(BPMN_CONFERENCE) as String
         val conference = Json.decodeFromString<Conference>(conferenceAsJson)
         googleAddSheetRow.execute(conference)
-        logger.info("[${execution.processInstanceId}] ${conference.name} add to Google Sheet")
+        logger.info("[${execution.processInstanceId}] ${conference.name} added to Google Sheet")
     }
 }

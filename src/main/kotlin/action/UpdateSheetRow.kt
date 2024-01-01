@@ -16,6 +16,6 @@ class UpdateSheetRow(private val googleUpdateSheetRow: GoogleUpdateSheetRow, pri
         val conferenceAsJson = execution.getVariable(BPMN_CONFERENCE) as String
         val conference = Json.decodeFromString<Conference>(conferenceAsJson)
         googleUpdateSheetRow.execute(conference, status.toString())
-        logger.info("[${execution.processInstanceId}] Google Sheet updated with status $status")
+        logger.info("[${execution.processInstanceId}] Google Sheet updated for ${conference.name} with status $status")
     }
 }

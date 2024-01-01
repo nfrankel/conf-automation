@@ -5,6 +5,8 @@ import ch.frankel.conf.automation.action.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.camunda.bpm.engine.RuntimeService
+import org.camunda.bpm.engine.runtime.MessageCorrelationResultType
+import org.camunda.bpm.engine.runtime.MessageCorrelationResultType.ProcessDefinition
 import org.slf4j.LoggerFactory
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.servlet.function.ServerRequest
@@ -35,22 +37,20 @@ class TriggerHandler(
                 logger.info("Ignoring message $message for ${event.action.data.card.name}")
                 ServerResponse.noContent().build()
             }
-            Message.Submitted, Message.Abandoned -> {
-                val conference = extractConference(event)
-                val params = mapOf(BPMN_CONFERENCE to Json.encodeToString(conference))
-                val processInstance = runtimeService.startProcessInstanceByMessage(message.toString(), event.cardId, params)
-                logger.info("[${processInstance.processInstanceId}] Started process instance with $message for ${conference.name}")
-                ServerResponse.accepted().body("{ id: ${processInstance.processInstanceId} }")
-            }
-            Message.Backlog, Message.Accepted, Message.Refused, Message.Published -> {
+            else -> {
                 val conference = extractConference(event)
                 val params = mapOf(BPMN_CONFERENCE to Json.encodeToString(conference))
                 val result = runtimeService.createMessageCorrelation(message.toString())
                     .processInstanceBusinessKey(event.cardId)
                     .setVariables(params)
                     .correlateWithResult()
-                logger.info("[${result.execution.processInstanceId}] Existing process instance found for ${conference.name}, continuing with $message")
-                ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
+                return if (result.resultType == ProcessDefinition) {
+                    logger.info("[${result.processInstance.processInstanceId}] Started process instance with $message for ${conference.name}")
+                    ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
+                } else {
+                    logger.info("[${result.execution.processInstanceId}] Existing process instance found for ${conference.name}, continuing with $message")
+                    ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
+                }
             }
         }
     }

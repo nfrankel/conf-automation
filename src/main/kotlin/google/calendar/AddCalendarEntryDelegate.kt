@@ -17,21 +17,20 @@ import java.time.format.DateTimeFormatter
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-class AddCalendarEntry(private val client: Calendar, private val props: CalendarProperties) : JavaDelegate {
+class AddCalendarEntryDelegate(private val client: Calendar, private val props: CalendarProperties) {
 
     private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd").withZone(ZoneId.systemDefault())
     private val logger = LoggerFactory.getLogger(this::class.java)
 
-    override fun execute(execution: DelegateExecution) {
-        val conference = execution.getConference()
+    fun execute(conference: Conference) {
         val entry = findCalendarEntry(client, props, conference)
         if (entry == null) {
             val event = conference.toCalendarEvent()
             logger.info(event.toString())
             client.events().insert(props.id, event).execute()
-            logger.info("[${execution.processInstanceId}] Calendar entry added for ${conference.name}")
+            logger.info("Calendar entry added for ${conference.name}")
         } else {
-            logger.error("[${execution.processInstanceId}] Calendar entry already exists for ${conference.name}")
+            logger.error("Calendar entry already exists for ${conference.name}")
         }
     }
 

@@ -1,10 +1,10 @@
 package ch.frankel.conf.automation
 
 import ch.frankel.conf.automation.action.*
-import ch.frankel.conf.automation.google.calendar.AddCalendarEntry
+import ch.frankel.conf.automation.google.calendar.AddCalendarEntryDelegate
 import ch.frankel.conf.automation.google.calendar.CalendarFactory
-import ch.frankel.conf.automation.google.calendar.RemoveCalendarEntry
-import ch.frankel.conf.automation.google.calendar.UpdateCalendarEntry
+import ch.frankel.conf.automation.google.calendar.RemoveCalendarEntryDelegate
+import ch.frankel.conf.automation.google.calendar.UpdateCalendarEntryDelegate
 import ch.frankel.conf.automation.google.sheets.GoogleAddSheetRow
 import ch.frankel.conf.automation.google.sheets.GoogleDeleteSheetRow
 import ch.frankel.conf.automation.google.sheets.GoogleUpdateSheetRow
@@ -41,13 +41,13 @@ private fun beans() = beans {
     bean { CalendarFactory(ref()).createInstance() }
     bean("tickDueDate") { TickDueDate(TrelloTickDueDate(ref()), true) }
     bean("untickDueDate") { TickDueDate(TrelloTickDueDate(ref()), false) }
-    bean("addCalendarEntry") { AddCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
+    bean("addCalendarEntry") { AddCalendarEntry(AddCalendarEntryDelegate(ref(), ref<AppProperties>().google.calendar)) }
     bean("addSheetRow") {
         val props = ref<AppProperties>()
         val googleAddSheetRow = GoogleAddSheetRow(ref(), props.google.sheets, props.speaker)
         AddSheetRow(googleAddSheetRow)
     }
-    bean("removeCalendarEntry") { RemoveCalendarEntry(ref(), ref<AppProperties>().google.calendar) }
+    bean("removeCalendarEntry") { DeleteCalendarEntry(RemoveCalendarEntryDelegate(ref(), ref<AppProperties>().google.calendar)) }
     bean("acceptSheetRow") {
         val props = ref<AppProperties>()
         val googleUpdateSheetRow = GoogleUpdateSheetRow(ref(), props.google.sheets, props.speaker)
@@ -68,7 +68,7 @@ private fun beans() = beans {
         val googleDeleteSheetRow = GoogleDeleteSheetRow(ref(), props.google.sheets, props.speaker)
         DeleteSheetRow(googleDeleteSheetRow)
     }
-    bean("updateCalendarEntry") { UpdateCalendarEntry(ref(),  ref<AppProperties>().google.calendar) }
+    bean("updateCalendarEntry") { UpdateCalendarEntry(UpdateCalendarEntryDelegate(ref(),  ref<AppProperties>().google.calendar)) }
     bean { LogAppVersionStartupListener(ref<AppProperties>().version) }
     bean { KotlinSerializationJsonHttpMessageConverter(
         Json {

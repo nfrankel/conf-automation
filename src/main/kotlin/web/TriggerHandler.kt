@@ -73,7 +73,7 @@ class TriggerHandler(
 
     private fun extractConference(event: TrelloEvent): Conference {
         val customFields: List<Field<out Any>> = getFieldsForCard(event.cardId)
-        return Conference(event.action.data.card.name, customFields)
+        return Conference.from(event.action.data.card.name, customFields)
     }
 
     private fun getFieldsForCard(cardId: String) = client.get()

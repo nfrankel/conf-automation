@@ -1,48 +1,55 @@
 package ch.frankel.conf.automation.action
 
-import java.io.Serializable
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.TemporalAccessor
+import kotlinx.datetime.Instant
+import kotlinx.serialization.Serializable
 
-class Conference(title: String, fields: List<Field<out Any>>): Serializable {
+@Serializable
+class Conference private constructor(
+    val name: String,
+    val location: String,
+    val website: String,
+    val startDate: Instant,
+    val endDate: Instant,
+) {
 
-    val startDate: LocalDate = LocalDate.from((fields.find { it is StartDate } as StartDate).value)
-    val endDate: LocalDate = LocalDate.from((fields.find { it is EndDate } as EndDate).value)
-    val website = (fields.find { it is Website } as Website).value
-    val name: String
-    val location: String
+    companion object {
+        fun from(title: String, fields: List<Field<out Any>>): Conference {
+            val name: String
+            val location: String
+            val regex = "(.*) \\d{4} \\((.*)\\)".toRegex()
+            val groups = regex.find(title)?.groupValues
+            when {
+                groups != null && groups.size > 2 -> {
+                    name = groups[1]
+                    location = groups[2]
+                }
+                groups != null && groups.size == 2 -> {
+                    name = groups[1]
+                    location = ""
+                }
+                else -> {
+                    name = ""
+                    location = ""
+                }
+            }
 
-    init {
-        val regex = "(.*) \\d{4} \\((.*)\\)".toRegex()
-        val groups = regex.find(title)?.groupValues
-        when {
-            groups != null && groups.size > 2 -> {
-                name = groups[1]
-                location = groups[2]
-            }
-            groups != null && groups.size == 2 -> {
-                name = groups[1]
-                location = ""
-            }
-            else -> {
-                name = ""
-                location = ""
-            }
+            val startDate: Instant = Instant.parse((fields.find { it is StartDate } as StartDate).value)
+            val endDate: Instant = Instant.parse((fields.find { it is EndDate } as EndDate).value)
+            val website = (fields.find { it is Website } as Website).value
+            return Conference(name, location, website, startDate, endDate)
         }
     }
 
     override fun toString() = "Conference(summary=$name,location=$location,website=\"$website\",startDate=$startDate,endDate=$endDate"
 }
 
-
 interface Field<T> {
     val name: String
     val value: T
 }
 
-abstract class AbstractDate(item: CustomFieldItem) : Field<TemporalAccessor> {
-    override val value: TemporalAccessor = DateTimeFormatter.ISO_ZONED_DATE_TIME.parse(item.value?.date)
+abstract class AbstractDate(item: CustomFieldItem) : Field<String> {
+    override val value: String = item.value?.date as String
 }
 
 class StartDate(item: CustomFieldItem) : AbstractDate(item) {

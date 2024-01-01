@@ -4,6 +4,8 @@ import ch.frankel.conf.automation.SheetsProperties
 import ch.frankel.conf.automation.action.Conference
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.slf4j.LoggerFactory
 
 class GoogleUpdateSheetRow(
@@ -16,7 +18,7 @@ class GoogleUpdateSheetRow(
 
     fun execute(conference: Conference, status: String) {
         val rows: ValueRange = client.spreadsheets()
-            .values()[props.id, "${conference.endDate.year}!A3:H"]
+            .values()[props.id, "${conference.endDate.toLocalDateTime(TimeZone.UTC).year}!A3:H"]
             .execute()
         val typedResult = Result(rows.values)
         val rangeToUpdate = typedResult.findSubmittedRange(speaker, conference)

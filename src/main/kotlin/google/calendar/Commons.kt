@@ -4,8 +4,9 @@ import ch.frankel.conf.automation.CalendarProperties
 import ch.frankel.conf.automation.action.Conference
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlinx.datetime.*
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 internal fun findCalendarEntry(
     client: Calendar,
@@ -13,8 +14,8 @@ internal fun findCalendarEntry(
     conference: Conference
 ) = client.events()
     .list(calendar.id)
-    .setTimeMin(conference.startDate.minusDays(1).toDateTime())
-    .setTimeMax(conference.endDate.plusDays(1).toDateTime())
+    .setTimeMin(conference.startDate.minus(1.toDuration(DurationUnit.DAYS)).toDateTime())
+    .setTimeMax(conference.endDate.plus(1.toDuration(DurationUnit.DAYS)).toDateTime())
     .execute()
     .items
     .find {
@@ -22,10 +23,7 @@ internal fun findCalendarEntry(
                 && it.creator.email == calendar.clientEmail
     }
 
-private fun LocalDate.toDateTime(): DateTime {
-    val millis = atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli()
-    return DateTime(millis)
-}
+private fun Instant.toDateTime() = DateTime(toEpochMilliseconds())
 
 @Suppress("unused")
 internal enum class Color(val id: String) {

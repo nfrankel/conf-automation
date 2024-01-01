@@ -4,6 +4,8 @@ import ch.frankel.conf.automation.SheetsProperties
 import ch.frankel.conf.automation.action.Conference
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.*
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.slf4j.LoggerFactory
 
 class GoogleDeleteSheetRow(
@@ -16,7 +18,7 @@ class GoogleDeleteSheetRow(
 
     fun execute(conference: Conference) {
         val rows: ValueRange = client.spreadsheets()
-            .values()[props.id, "${conference.endDate.year}!A3:H"]
+            .values()[props.id, "${conference.endDate.toLocalDateTime(TimeZone.UTC).year}!A3:H"]
             .execute()
         val typedResult = Result(rows.values)
         val rowIndicesToUpdate = typedResult.findRowIndices(speaker, conference)
@@ -44,6 +46,6 @@ class GoogleDeleteSheetRow(
     }
 
     private fun getSheetId(conference: Conference) = client.spreadsheets()[props.id].execute().sheets.single {
-        it.properties.title == conference.endDate.year.toString()
+        it.properties.title == conference.endDate.toLocalDateTime(TimeZone.UTC).year.toString()
     }.properties.sheetId
 }

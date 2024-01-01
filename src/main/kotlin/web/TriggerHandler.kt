@@ -23,7 +23,7 @@ class TriggerHandler(
 
     fun post(request: ServerRequest): ServerResponse {
         val event = request.body(TrelloEvent::class.java)
-        logger.info("Received event is $event")
+        logger.info("Received event is ${Json.encodeToString(event)}")
         if (eventSet.contains(event)) {
             logger.info("Ignoring duplicate event $event")
             return ServerResponse.noContent().build()

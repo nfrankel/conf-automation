@@ -8,14 +8,6 @@ import kotlinx.serialization.SerialName
 @Serializable
 data class TrelloEvent(val action: Action, val model: Model, val webhook: Webhook) {
     val cardId = this.action.data.card.id
-
-    override fun toString() = """
-        | TrelloEvent(
-        |   action=$action,
-        |   model=$model,
-        |   webhook=$webhook
-        | )
-    """.trimIndent()
 }
 
 @Serializable

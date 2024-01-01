@@ -1,4 +1,4 @@
-package ch.frankel.conf.automation.google.calendar
+package ch.frankel.conf.automation.delegate.calendar
 
 import ch.frankel.conf.automation.CalendarProperties
 import ch.frankel.conf.automation.action.Conference

@@ -1,15 +1,17 @@
-package ch.frankel.conf.automation.google.sheets
+package ch.frankel.conf.automation.delegate.sheets
 
 import ch.frankel.conf.automation.SheetsProperties
-import ch.frankel.conf.automation.action.*
+import ch.frankel.conf.automation.action.Conference
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.ValueRange
-import kotlinx.datetime.*
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import org.slf4j.LoggerFactory
-import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class GoogleAddSheetRow(private val client: Sheets, private val props: SheetsProperties, private val speaker: String) {
+class AddSheetRowDelegate(private val client: Sheets, private val props: SheetsProperties, private val speaker: String) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
 

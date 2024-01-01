@@ -1,4 +1,4 @@
-package ch.frankel.conf.automation.google.sheets
+package ch.frankel.conf.automation.delegate.sheets
 
 import ch.frankel.conf.automation.SheetsProperties
 import ch.frankel.conf.automation.action.Conference
@@ -8,7 +8,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.slf4j.LoggerFactory
 
-class GoogleDeleteSheetRow(
+class DeleteSheetRowDelegate(
     private val client: Sheets,
     private val props: SheetsProperties,
     private val speaker: String,

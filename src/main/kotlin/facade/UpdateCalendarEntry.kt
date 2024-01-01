@@ -1,7 +1,7 @@
-package ch.frankel.conf.automation.action
+package ch.frankel.conf.automation.facade
 
 import ch.frankel.conf.automation.getConference
-import ch.frankel.conf.automation.google.calendar.UpdateCalendarEntryDelegate
+import ch.frankel.conf.automation.delegate.calendar.UpdateCalendarEntryDelegate
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 

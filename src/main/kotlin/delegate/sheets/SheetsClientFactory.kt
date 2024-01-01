@@ -1,4 +1,4 @@
-package ch.frankel.conf.automation.google.sheets
+package ch.frankel.conf.automation.delegate.sheets
 
 import ch.frankel.conf.automation.AppProperties
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport

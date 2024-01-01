@@ -1,16 +1,13 @@
-package ch.frankel.conf.automation.google.calendar
+package ch.frankel.conf.automation.delegate.calendar
 
 import ch.frankel.conf.automation.CalendarProperties
 import ch.frankel.conf.automation.action.Conference
-import ch.frankel.conf.automation.getConference
 import com.google.api.client.util.DateTime
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.model.Event
 import com.google.api.services.calendar.model.EventDateTime
 import kotlinx.datetime.Instant
 import kotlinx.datetime.toJavaInstant
-import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.camunda.bpm.engine.delegate.JavaDelegate
 import org.slf4j.LoggerFactory
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter

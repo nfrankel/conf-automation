@@ -6,7 +6,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.WebClientResponseException
 import reactor.util.Loggers
 
-class TrelloTickDueDate(private val client: WebClient) {
+class TickDueDateDelegate(private val client: WebClient) {
 
     private val logger = Loggers.getLogger(this::class.java)
 

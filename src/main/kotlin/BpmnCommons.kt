@@ -10,9 +10,10 @@ enum class Message {
     Created, Submitted, Accepted, Refused, Abandoned, Irrelevant, Backlog, Published;
 
     companion object {
-        operator fun invoke(name: String?): Message {
-            return if (name == null) Irrelevant
-            else entries.find { it.name == name } ?: Irrelevant
+        operator fun invoke(name: String?) = try {
+            Message.valueOf(name ?: "Irrelevant")
+        } catch (e: IllegalArgumentException) {
+            Irrelevant
         }
     }
 }

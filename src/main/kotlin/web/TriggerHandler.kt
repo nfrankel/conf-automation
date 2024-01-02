@@ -29,6 +29,7 @@ class TriggerHandler(
             logger.info("Ignoring duplicate event $event")
             return ServerResponse.noContent().build()
         }
+        eventSet.add(event)
         val message = Message.from(event.action)
         logger.info("Extracted message $message for ${event.action.data.card.name}")
         return when (message) {

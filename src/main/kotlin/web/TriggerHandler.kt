@@ -7,16 +7,16 @@ import kotlinx.serialization.json.Json
 import org.camunda.bpm.engine.RuntimeService
 import org.camunda.bpm.engine.runtime.MessageCorrelationResultType.ProcessDefinition
 import org.slf4j.LoggerFactory
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.core.ParameterizedTypeReference
+import org.springframework.web.client.RestClient
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
-import reactor.core.publisher.Mono
 
 
 class TriggerHandler(
     private val runtimeService: RuntimeService,
     private val fieldsInitializer: CustomFieldsInitializer,
-    private val client: WebClient,
+    private val client: RestClient,
     private val eventSet: MutableSet<TrelloEvent>
 ) {
 
@@ -75,19 +75,17 @@ class TriggerHandler(
         return Conference.from(event.action.data.card.name, customFields)
     }
 
-    private fun getFieldsForCard(cardId: String) = client.get()
+    private fun getFieldsForCard(cardId: String): List<Field<out Any>> = client.get()
         .uri("/cards/$cardId/customFieldItems?key={key}&token={token}")
         .retrieve()
-        .bodyToFlux(CustomFieldItem::class.java)
-        .flatMap { getField(it) }
-        .filter { it !is IrrelevantField }
-        .collectList()
-        .block() ?: emptyList()
+        .body(object: ParameterizedTypeReference<List<CustomFieldItem>>() {})
+        ?.map { getField(it) }
+        ?.filter { it !is IrrelevantField } ?: listOf()
 
     /* Required by Trello, as it executes a HEAD request to make sure the endpoint is up. */
     fun head(request: ServerRequest) = ServerResponse.ok().build()
 
-    private fun getField(item: CustomFieldItem): Mono<Field<out Any>> =
+    private fun getField(item: CustomFieldItem): Field<out Any> =
         fieldsInitializer.fields
             .filter { it.first == item.idCustomField }
             .map {

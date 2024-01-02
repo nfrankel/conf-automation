@@ -48,7 +48,7 @@ interface Field<T> {
     val value: T
 }
 
-abstract class AbstractDate(item: CustomFieldItem) : Field<String> {
+sealed class AbstractDate(item: CustomFieldItem) : Field<String> {
     override val value: String = item.value?.date as String
 }
 

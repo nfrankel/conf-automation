@@ -1,6 +1,6 @@
 package ch.frankel.conf.automation.facade
 
-import ch.frankel.conf.automation.trello.TickDueDateDelegate
+import ch.frankel.conf.automation.delegate.trello.TickDueDateDelegate
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.delegate.JavaDelegate
 

@@ -2,16 +2,15 @@ package ch.frankel.conf.automation.web
 
 import camundajar.impl.com.google.gson.Gson
 import ch.frankel.conf.automation.AppProperties
-import org.springframework.web.reactive.function.BodyInserters
-import org.springframework.web.reactive.function.client.WebClient
+import org.slf4j.LoggerFactory
+import org.springframework.web.client.RestClient
 import org.springframework.web.servlet.function.ServerRequest
 import org.springframework.web.servlet.function.ServerResponse
-import reactor.util.Loggers
 
-class RegisterHandler(props: AppProperties, private val client: WebClient) {
+class RegisterHandler(props: AppProperties, private val client: RestClient) {
 
     private val trello = props.trello
-    private val logger = Loggers.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun post(request: ServerRequest): ServerResponse {
         logger.info("Received registration request from ${request.remoteAddress()}")
@@ -22,10 +21,9 @@ class RegisterHandler(props: AppProperties, private val client: WebClient) {
         )
         client.post()
             .uri("/tokens/{token}/webhooks?key={key}")
-            .body(BodyInserters.fromValue(requestEntity))
+            .body(requestEntity)
             .retrieve()
-            .bodyToMono(RegisterResponse::class.java)
-            .block()
+            .body(RegisterResponse::class.java)
             .also {
                 logger.info("Registration response from Trello: $it")
                 return ServerResponse.accepted()

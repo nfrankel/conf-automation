@@ -1,17 +1,17 @@
 package ch.frankel.conf.automation
 
-import ch.frankel.conf.automation.action.*
+import ch.frankel.conf.automation.action.DeleteSheetRow
 import ch.frankel.conf.automation.delegate.calendar.AddCalendarEntryDelegate
 import ch.frankel.conf.automation.delegate.calendar.CalendarFactory
 import ch.frankel.conf.automation.delegate.calendar.RemoveCalendarEntryDelegate
 import ch.frankel.conf.automation.delegate.calendar.UpdateCalendarEntryDelegate
 import ch.frankel.conf.automation.delegate.sheets.AddSheetRowDelegate
 import ch.frankel.conf.automation.delegate.sheets.DeleteSheetRowDelegate
-import ch.frankel.conf.automation.delegate.sheets.UpdateSheetRowDelegate
 import ch.frankel.conf.automation.delegate.sheets.SheetsClientFactory
+import ch.frankel.conf.automation.delegate.sheets.UpdateSheetRowDelegate
 import ch.frankel.conf.automation.facade.*
-import ch.frankel.conf.automation.trello.ConfAutomationWebClientCustomizer
-import ch.frankel.conf.automation.trello.TickDueDateDelegate
+import ch.frankel.conf.automation.delegate.trello.ConfAutomationRestClientCustomizer
+import ch.frankel.conf.automation.delegate.trello.TickDueDateDelegate
 import ch.frankel.conf.automation.web.RegisterHandler
 import ch.frankel.conf.automation.web.TriggerHandler
 import ch.frankel.conf.automation.web.WhitelistIPFilterFunction
@@ -24,7 +24,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.context.support.beans
 import org.springframework.http.converter.json.KotlinSerializationJsonHttpMessageConverter
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.client.RestClient
 import org.springframework.web.servlet.function.router
 
 @SpringBootApplication
@@ -34,10 +34,10 @@ class ConfAutomationApplication
 
 @OptIn(ExperimentalSerializationApi::class)
 private fun beans() = beans {
-    bean { ConfAutomationWebClientCustomizer(ref()) }
+    bean { ConfAutomationRestClientCustomizer(ref()) }
     bean { routes(ref(), ref(), ref(), ref(), ref()) }
     bean { CustomFieldsInitializer(ref(), ref()) }
-    bean { ref<WebClient.Builder>().build() }
+    bean { ref<RestClient.Builder>().build() }
     bean { SheetsClientFactory(ref()).createInstance() }
     bean { CalendarFactory(ref()).createInstance() }
     bean("tickDueDate") { TickDueDate(TickDueDateDelegate(ref()), true) }
@@ -87,7 +87,7 @@ private fun routes(
     customFieldsInitializer: CustomFieldsInitializer,
     props: AppProperties,
     whiteListIP: WhitelistIPFilterFunction,
-    client: WebClient
+    client: RestClient
 ) = router {
     val trigger = TriggerHandler(runtimeService, customFieldsInitializer, client, mutableSetOf())
     POST("/trigger", trigger::post)

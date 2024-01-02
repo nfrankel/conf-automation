@@ -1,14 +1,13 @@
-package ch.frankel.conf.automation.trello
+package ch.frankel.conf.automation.delegate.trello
 
+import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
-import org.springframework.web.reactive.function.BodyInserters
-import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.WebClientResponseException
-import reactor.util.Loggers
+import org.springframework.web.client.RestClient
+import org.springframework.web.client.RestClientResponseException
 
-class TickDueDateDelegate(private val client: WebClient) {
+class TickDueDateDelegate(private val client: RestClient) {
 
-    private val logger = Loggers.getLogger(this::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun execute(processInstanceId: String, cardId: String, tick: Boolean) {
         val what = if (tick) "tick" else "untick"
@@ -17,12 +16,11 @@ class TickDueDateDelegate(private val client: WebClient) {
             val response = client.put()
                 .uri("/cards/$cardId/dueComplete?key={key}&token={token}")
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(mapOf("value" to tick)))
+                .body(mapOf("value" to tick))
                 .retrieve()
                 .toBodilessEntity()
-                .block()
-            logger.info("[$processInstanceId] Due date $what result on card $cardId is ${response?.statusCode}")
-        } catch (e: WebClientResponseException) {
+            logger.info("[$processInstanceId] Due date $what result on card $cardId is ${response.statusCode}")
+        } catch (e: RestClientResponseException) {
             logger.info("[$processInstanceId] Due date $tick failed on card $cardId with status ${e.statusCode}. Most likely the card has no due date")
         }
     }

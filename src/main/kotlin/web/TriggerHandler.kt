@@ -1,6 +1,7 @@
 package ch.frankel.conf.automation.web
 
 import ch.frankel.conf.automation.*
+import ch.frankel.conf.automation.ActionType.*
 import ch.frankel.conf.automation.facade.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -56,10 +57,10 @@ class TriggerHandler(
 
     private fun extractMessage(event: TrelloEvent): Message {
         return when (event.action.type) {
-            ActionType.COPY_CARD -> Message.Created
-            ActionType.UPDATE_CUSTOM_FIELD_ITEM -> Message.Irrelevant
-            ActionType.ADD_LABEL_TO_CARD -> Message.Irrelevant
-            ActionType.UPDATE_CARD -> {
+            COPY_CARD, CREATE_CARD -> Message.Created
+            UPDATE_CUSTOM_FIELD_ITEM -> Message.Irrelevant
+            ADD_LABEL_TO_CARD -> Message.Irrelevant
+            UPDATE_CARD -> {
                 val before = event.action.data.listBefore
                 val after = event.action.data.listAfter
                 // Transition from one state to another

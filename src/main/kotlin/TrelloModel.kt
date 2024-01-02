@@ -48,6 +48,8 @@ data class Old(val name: String?, val idList: String?)
 
 @Serializable
 enum class ActionType {
+    @SerialName("createCard")
+    CREATE_CARD,
     @SerialName("updateCard")
     UPDATE_CARD,
     @SerialName("updateCustomFieldItem")

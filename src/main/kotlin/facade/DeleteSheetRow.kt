@@ -1,4 +1,4 @@
-package ch.frankel.conf.automation.action
+package ch.frankel.conf.automation.facade
 
 import ch.frankel.conf.automation.getConference
 import ch.frankel.conf.automation.delegate.sheets.DeleteSheetRowDelegate

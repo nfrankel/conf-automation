@@ -1,6 +1,6 @@
 package ch.frankel.conf.automation
 
-import ch.frankel.conf.automation.action.DeleteSheetRow
+import ch.frankel.conf.automation.facade.DeleteSheetRow
 import ch.frankel.conf.automation.delegate.calendar.AddCalendarEntryDelegate
 import ch.frankel.conf.automation.delegate.calendar.CalendarFactory
 import ch.frankel.conf.automation.delegate.calendar.RemoveCalendarEntryDelegate

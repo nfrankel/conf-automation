@@ -1,7 +1,7 @@
 package ch.frankel.conf.automation.web
 
 import ch.frankel.conf.automation.*
-import ch.frankel.conf.automation.action.*
+import ch.frankel.conf.automation.facade.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.camunda.bpm.engine.RuntimeService

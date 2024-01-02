@@ -1,7 +1,7 @@
 package ch.frankel.conf.automation.delegate.calendar
 
 import ch.frankel.conf.automation.CalendarProperties
-import ch.frankel.conf.automation.action.Conference
+import ch.frankel.conf.automation.facade.Conference
 import com.google.api.services.calendar.Calendar
 import org.slf4j.LoggerFactory
 

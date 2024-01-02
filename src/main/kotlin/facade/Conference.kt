@@ -1,4 +1,4 @@
-package ch.frankel.conf.automation.action
+package ch.frankel.conf.automation.facade
 
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable

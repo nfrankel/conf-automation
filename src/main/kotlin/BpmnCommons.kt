@@ -1,6 +1,6 @@
 package ch.frankel.conf.automation
 
-import ch.frankel.conf.automation.action.Conference
+import ch.frankel.conf.automation.facade.Conference
 import kotlinx.serialization.json.Json
 import org.camunda.bpm.engine.delegate.DelegateExecution
 

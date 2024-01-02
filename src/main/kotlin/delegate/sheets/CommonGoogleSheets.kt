@@ -1,6 +1,6 @@
 package ch.frankel.conf.automation.delegate.sheets
 
-import ch.frankel.conf.automation.action.Conference
+import ch.frankel.conf.automation.facade.Conference
 
 internal class Result(values: Collection<Any>) {
     private val majorDimension: String

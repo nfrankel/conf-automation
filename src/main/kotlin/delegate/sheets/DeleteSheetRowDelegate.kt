@@ -1,7 +1,7 @@
 package ch.frankel.conf.automation.delegate.sheets
 
 import ch.frankel.conf.automation.SheetsProperties
-import ch.frankel.conf.automation.action.Conference
+import ch.frankel.conf.automation.facade.Conference
 import com.google.api.services.sheets.v4.Sheets
 import com.google.api.services.sheets.v4.model.*
 import kotlinx.datetime.TimeZone

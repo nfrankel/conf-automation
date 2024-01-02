@@ -1,7 +1,6 @@
 package ch.frankel.conf.automation.web
 
 import ch.frankel.conf.automation.*
-import ch.frankel.conf.automation.ActionType.*
 import ch.frankel.conf.automation.facade.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -30,7 +29,7 @@ class TriggerHandler(
             logger.info("Ignoring duplicate event $event")
             return ServerResponse.noContent().build()
         }
-        val message = extractMessage(event)
+        val message = Message.from(event.action)
         logger.info("Extracted message $message for ${event.action.data.card.name}")
         return when (message) {
             Message.Irrelevant, Message.Created -> {
@@ -51,22 +50,6 @@ class TriggerHandler(
                     logger.info("[${result.execution.processInstanceId}] Existing process instance found for ${conference.name}, continuing with $message")
                     ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
                 }
-            }
-        }
-    }
-
-    private fun extractMessage(event: TrelloEvent): Message {
-        return when (event.action.type) {
-            COPY_CARD, CREATE_CARD -> Message.Created
-            UPDATE_CUSTOM_FIELD_ITEM -> Message.Irrelevant
-            ADD_LABEL_TO_CARD -> Message.Irrelevant
-            UPDATE_CARD -> {
-                val before = event.action.data.listBefore
-                val after = event.action.data.listAfter
-                // Transition from one state to another
-                if (before?.name != after?.name) return Message(after?.name)
-                // Anything else
-                return Message.Irrelevant
             }
         }
     }

@@ -34,3 +34,8 @@ secrets.yml
 /root.crt
 .java-version
 .env
+
+pom.xml.next
+pom.xml.releaseBackup
+pom.xml.tag
+release.properties

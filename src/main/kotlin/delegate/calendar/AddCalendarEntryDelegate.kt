@@ -23,8 +23,7 @@ class AddCalendarEntryDelegate(private val client: Calendar, private val props: 
         val entry = findCalendarEntry(client, props, conference)
         if (entry == null) {
             val event = conference.toCalendarEvent()
-            logger.info(event.toString())
-            client.events().insert(props.id, event).execute()
+             client.events().insert(props.id, event).execute()
             logger.info("Calendar entry added for ${conference.name}")
         } else {
             logger.error("Calendar entry already exists for ${conference.name}")

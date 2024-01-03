@@ -31,10 +31,10 @@ class TriggerHandler(
         }
         eventSet.add(event)
         val message = Message.from(event.action)
-        logger.info("Extracted message $message for ${event.action.data.card.name}")
+        logger.info("Extracted message $message for ${event.action.data?.card?.name}")
         return when (message) {
             Message.Irrelevant, Message.Created -> {
-                logger.info("Ignoring message $message for ${event.action.data.card.name}")
+                logger.info("Ignoring message $message for ${event.action.data?.card?.name}")
                 ServerResponse.noContent().build()
             }
             else -> {
@@ -55,9 +55,15 @@ class TriggerHandler(
         }
     }
 
+    /* Required by Trello, as it executes a HEAD request to make sure the endpoint is up. */
+    fun head(request: ServerRequest) = ServerResponse.ok().build()
+
     private fun extractConference(event: TrelloEvent): Conference {
-        val customFields: List<Field<out Any>> = getFieldsForCard(event.cardId)
-        return Conference.from(event.action.data.card.name, customFields)
+        if (event.action.data != null) {
+            val customFields: List<Field<out Any>> = getFieldsForCard(event.action.data.card.id)
+            return Conference.from(event.action.data.card.name, customFields)
+        }
+        throw IllegalStateException("Data for $event is null, cannot extract conference at this point")
     }
 
     private fun getFieldsForCard(cardId: String): List<Field<out Any>> = client.get()
@@ -66,9 +72,6 @@ class TriggerHandler(
         .body(object: ParameterizedTypeReference<List<CustomFieldItem>>() {})
         ?.map { getField(it) }
         ?.filter { it !is IrrelevantField } ?: listOf()
-
-    /* Required by Trello, as it executes a HEAD request to make sure the endpoint is up. */
-    fun head(request: ServerRequest) = ServerResponse.ok().build()
 
     private fun getField(item: CustomFieldItem): Field<out Any> =
         fieldsInitializer.fields

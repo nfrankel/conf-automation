@@ -25,8 +25,8 @@ enum class Message {
                 UPDATE_CUSTOM_FIELD_ITEM -> Irrelevant
                 ADD_LABEL_TO_CARD -> Irrelevant
                 UPDATE_CARD -> {
-                    val before = action.data.listBefore
-                    val after = action.data.listAfter
+                    val before = action.data?.listBefore
+                    val after = action.data?.listAfter
                     // Transition from one state to another
                     if (before?.name != after?.name) Message(after?.name)
                     // Anything else

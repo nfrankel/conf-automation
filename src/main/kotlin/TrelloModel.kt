@@ -6,9 +6,7 @@ import kotlinx.serialization.SerialName
 
 
 @Serializable
-data class TrelloEvent(val action: Action, val model: Model, val webhook: Webhook) {
-    val cardId = this.action.data?.card?.id
-}
+data class TrelloEvent(val action: Action, val model: Model, val webhook: Webhook)
 
 @Serializable
 data class Action(

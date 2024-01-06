@@ -31,17 +31,18 @@ class TriggerHandler(
         }
         eventSet.add(event)
         val message = Message.from(event.action)
-        logger.info("Extracted message $message for ${event.action.data?.card?.name}")
+        val conferenceName = event.action.data?.card?.name
+        logger.info("Extracted message $message for $conferenceName")
         return when (message) {
             Message.Irrelevant, Message.Created -> {
-                logger.info("Ignoring message $message for ${event.action.data?.card?.name}")
+                logger.info("Ignoring message $message for $conferenceName")
                 ServerResponse.noContent().build()
             }
             else -> {
                 val conference = extractConference(event)
                 val params = mapOf(BPMN_CONFERENCE to Json.encodeToString(conference))
                 val result = runtimeService.createMessageCorrelation(message.toString())
-                    .processInstanceBusinessKey(event.cardId)
+                    .processInstanceBusinessKey(event.action.data?.card?.id)
                     .setVariables(params)
                     .correlateWithResult()
                 return if (result.resultType == ProcessDefinition) {

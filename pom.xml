@@ -16,7 +16,7 @@
   </scm>
     <properties>
         <java.version>17</java.version>
-        <kotlin.version>1.9.23</kotlin.version>
+        <kotlin.version>1.9.24</kotlin.version>
         <tagNameFormat>v@{project.version}</tagNameFormat>
         <scmReleaseCommitComment>build: Release @{releaseLabel}</scmReleaseCommitComment>
         <scmDevelopmentCommitComment>build: Start new development version</scmDevelopmentCommitComment>

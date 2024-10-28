@@ -4,6 +4,8 @@ application:
   version: '@project.version@'
 spring:
   application.name: ${application.name}
-  datasource.driver-class-name: org.postgresql.Driver
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari.transaction-isolation: READ_COMMITTED
   main.banner-mode: off
 camunda.bpm.history-level: none

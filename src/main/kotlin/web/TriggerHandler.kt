@@ -38,26 +38,34 @@ class TriggerHandler(
                 logger.info("Ignoring message $message for $conferenceName")
                 ServerResponse.noContent().build()
             }
-            else -> {
-                val conference = extractConference(event)
-                val params = mapOf(BPMN_CONFERENCE to Json.encodeToString(conference))
-                val result = runtimeService.createMessageCorrelation(message.toString())
-                    .processInstanceBusinessKey(event.action.data?.card?.id)
-                    .setVariables(params)
-                    .correlateWithResult()
-                return if (result.resultType == ProcessDefinition) {
-                    logger.info("[${result.processInstance.processInstanceId}] Started process instance with $message for ${conference.name}")
-                    ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
-                } else {
-                    logger.info("[${result.execution.processInstanceId}] Existing process instance found for ${conference.name}, continuing with $message")
-                    ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
-                }
-            }
+            else -> handleRelevantMessage(event, message, conferenceName)
         }
     }
 
     /* Required by Trello, as it executes a HEAD request to make sure the endpoint is up. */
     fun head(request: ServerRequest) = ServerResponse.ok().build()
+
+    private fun handleRelevantMessage(event: TrelloEvent, message: Message, conferenceName: String?): ServerResponse {
+        return try {
+            val conference = extractConference(event)
+            val params = mapOf(BPMN_CONFERENCE to Json.encodeToString(conference))
+            val result = runtimeService.createMessageCorrelation(message.toString())
+                .processInstanceBusinessKey(event.action.data?.card?.id)
+                .setVariables(params)
+                .correlateWithResult()
+
+            if (result.resultType == ProcessDefinition) {
+                logger.info("[${result.processInstance.processInstanceId}] Started process instance with message: $message for conference: ${conference.name}")
+                ServerResponse.accepted().body("{ id: ${result.processInstance.processInstanceId} }")
+            } else {
+                logger.info("[${result.execution.processInstanceId}] Existing process instance found for conference: ${conference.name}, continuing with message: $message")
+                ServerResponse.accepted().body("{ id: ${result.execution.processInstanceId} }")
+            }
+        } catch (e: Exception) {
+            logger.error("Error handling message: $message for conference: $conferenceName", e)
+            ServerResponse.status(500).body("Internal Server Error")
+        }
+    }
 
     private fun extractConference(event: TrelloEvent): Conference {
         if (event.action.data != null) {

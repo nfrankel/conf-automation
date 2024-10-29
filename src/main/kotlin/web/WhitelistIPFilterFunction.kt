@@ -18,9 +18,15 @@ class WhitelistIPFilterFunction(props: AppProperties) : HandlerFilterFunction<Se
     override fun filter(request: ServerRequest, next: HandlerFunction<ServerResponse>): ServerResponse {
         val remoteAddress: String? = request.remoteAddress().orElse(null)?.address?.hostAddress
         logger.info("Request received from $remoteAddress")
-        return if (ips.none { it.contains(IPAddressString(remoteAddress).address) }) {
-            logger.info("IP $remoteAddress is not white-listed, denying")
+        return if (remoteAddress == null) {
+            logger.warn("Remote address is null, denying access")
             ServerResponse.status(FORBIDDEN).build()
-        } else next.handle(request)
+        } else if (ips.none { it.contains(IPAddressString(remoteAddress).address) }) {
+            logger.info("IP $remoteAddress is not white-listed, denying access")
+            ServerResponse.status(FORBIDDEN).build()
+        } else {
+            logger.info("IP $remoteAddress is white-listed, allowing access")
+            next.handle(request)
+        }
     }
 }

@@ -25,9 +25,7 @@ class AddCalendarEntryDelegate(private val client: Calendar, private val props: 
             val event = conference.toCalendarEvent()
              client.events().insert(props.id, event).execute()
             logger.info("Calendar entry added for ${conference.name}")
-        } else {
-            logger.error("Calendar entry already exists for ${conference.name}")
-        }
+        } else logger.error("Calendar entry already exists for ${conference.name}")
     }
 
     private fun Conference.toCalendarEvent() = Event().apply {
@@ -35,10 +33,8 @@ class AddCalendarEntryDelegate(private val client: Calendar, private val props: 
         val startDate = this@toCalendarEvent.startDate
         val endDate = this@toCalendarEvent.endDate
         start = startDate.toEventDateTime()
-        end = if (startDate == endDate)
-            endDate.toEventDateTime()
-        else
-            endDate.plus(1.toDuration(DurationUnit.DAYS)).toEventDateTime()
+        end = if (startDate == endDate) endDate.toEventDateTime()
+        else endDate.plus(1.toDuration(DurationUnit.DAYS)).toEventDateTime()
         colorId = Color.Gray.id
         transparency = Availability.Free.value
     }

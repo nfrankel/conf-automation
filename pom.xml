@@ -9,7 +9,7 @@
     </parent>
     <groupId>ch.frankel.conftools</groupId>
     <artifactId>conf-automation</artifactId>
-    <version>1.2.15-SNAPSHOT</version>
+    <version>1.2.15</version>
     <scm>
         <developerConnection>scm:git:git@github.com:nfrankel/conf-automation.git</developerConnection>
       <tag>HEAD</tag>
